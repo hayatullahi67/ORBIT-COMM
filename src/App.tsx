@@ -10,6 +10,11 @@ import Pricing from "./pages/Pricing";
 import SignUp from "./pages/auth/SignUp";
 import Login from "./pages/auth/Login";
 import Dashboard from "./pages/dashboard/Dashboard";
+import MyNumbers from "./pages/dashboard/MyNumbers";
+import MyESIMs from "./pages/dashboard/MyESIMs";
+import Transactions from "./pages/dashboard/Transactions";
+import APIAccess from "./pages/dashboard/APIAccess";
+import Settings from "./pages/dashboard/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,11 +37,11 @@ const App = () => (
           
           {/* Dashboard Routes */}
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/dashboard/numbers" element={<Dashboard />} />
-          <Route path="/dashboard/esims" element={<Dashboard />} />
-          <Route path="/dashboard/transactions" element={<Dashboard />} />
-          <Route path="/dashboard/api" element={<Dashboard />} />
-          <Route path="/dashboard/settings" element={<Dashboard />} />
+          <Route path="/dashboard/numbers" element={<MyNumbers />} />
+          <Route path="/dashboard/esims" element={<MyESIMs />} />
+          <Route path="/dashboard/transactions" element={<Transactions />} />
+          <Route path="/dashboard/api" element={<APIAccess />} />
+          <Route path="/dashboard/settings" element={<Settings />} />
           
           {/* Static Pages */}
           <Route path="/about" element={<NotFound />} />
