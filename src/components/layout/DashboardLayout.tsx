@@ -1,0 +1,182 @@
+import { useState } from "react"
+import { Link, useLocation } from "react-router-dom"
+import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { cn } from "@/lib/utils"
+import {
+  Home,
+  Smartphone,
+  Globe,
+  CreditCard,
+  Code,
+  Settings,
+  LogOut,
+  User,
+  Menu,
+  X,
+  Bell,
+  Wallet
+} from "lucide-react"
+
+interface DashboardLayoutProps {
+  children: React.ReactNode
+}
+
+const DashboardLayout = ({ children }: DashboardLayoutProps) => {
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const location = useLocation()
+
+  const navigation = [
+    { name: "Dashboard", href: "/dashboard", icon: Home },
+    { name: "My Numbers", href: "/dashboard/numbers", icon: Smartphone },
+    { name: "My eSIMs", href: "/dashboard/esims", icon: Globe },
+    { name: "Transactions", href: "/dashboard/transactions", icon: CreditCard },
+    { name: "API Access", href: "/dashboard/api", icon: Code },
+    { name: "Settings", href: "/dashboard/settings", icon: Settings },
+  ]
+
+  const isActive = (path: string) => location.pathname === path
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Mobile sidebar overlay */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <div className={cn(
+        "fixed inset-y-0 left-0 z-50 w-64 bg-card/50 backdrop-blur-xl border-r border-border transform transition-transform duration-200 ease-in-out lg:translate-x-0",
+        sidebarOpen ? "translate-x-0" : "-translate-x-full"
+      )}>
+        <div className="flex h-full flex-col">
+          {/* Logo */}
+          <div className="flex h-16 items-center justify-between px-6 border-b border-border">
+            <Link to="/" className="flex items-center space-x-2">
+              <div className="relative">
+                <Smartphone className="h-8 w-8 text-primary" />
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-accent rounded-full animate-pulse" />
+              </div>
+              <span className="text-xl font-space font-bold bg-gradient-primary bg-clip-text text-transparent">
+                VirtualSIM
+              </span>
+            </Link>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="lg:hidden"
+              onClick={() => setSidebarOpen(false)}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+
+          {/* Navigation */}
+          <nav className="flex-1 px-4 py-6 space-y-2">
+            {navigation.map((item) => {
+              const Icon = item.icon
+              return (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className={cn(
+                    "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                    isActive(item.href)
+                      ? "bg-primary/10 text-primary border border-primary/20"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                  )}
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <Icon className="h-4 w-4" />
+                  {item.name}
+                </Link>
+              )
+            })}
+          </nav>
+
+          <Separator />
+
+          {/* User section */}
+          <div className="p-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="w-full justify-start p-2">
+                  <Avatar className="h-8 w-8 mr-3">
+                    <AvatarImage src="/placeholder-avatar.png" />
+                    <AvatarFallback>JD</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 text-left">
+                    <p className="text-sm font-medium">John Doe</p>
+                    <p className="text-xs text-muted-foreground">john@example.com</p>
+                  </div>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to="/dashboard/settings">
+                    <User className="mr-2 h-4 w-4" />
+                    Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/dashboard/transactions">
+                    <Wallet className="mr-2 h-4 w-4" />
+                    Billing
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+      </div>
+
+      {/* Main content */}
+      <div className="lg:pl-64">
+        {/* Top bar */}
+        <header className="flex h-16 items-center justify-between border-b border-border bg-background/80 backdrop-blur-xl px-6">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="lg:hidden"
+            onClick={() => setSidebarOpen(true)}
+          >
+            <Menu className="h-4 w-4" />
+          </Button>
+
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" className="relative">
+              <Bell className="h-4 w-4" />
+              <div className="absolute -top-1 -right-1 w-2 h-2 bg-accent rounded-full" />
+            </Button>
+          </div>
+        </header>
+
+        {/* Page content */}
+        <main className="p-6">
+          {children}
+        </main>
+      </div>
+    </div>
+  )
+}
+
+export default DashboardLayout
