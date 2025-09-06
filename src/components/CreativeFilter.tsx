@@ -1,253 +1,210 @@
 import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { 
-  Search, 
-  Smartphone, 
-  MessageSquare, 
-  Wifi, 
-  Phone,
-  Twitter,
-  Send,
-  MessageCircle,
-  Mail,
-  Instagram,
-  Facebook,
-  Linkedin,
-  Github,
-  Zap,
-  Star,
-  TrendingUp,
-  Globe2,
-  Shield,
-  Clock,
-  CreditCard
-} from "lucide-react"
+import { Search } from "lucide-react"
+import {
+  FaFacebook,
+  FaGoogle,
+  FaInstagram,
+  FaWeixin,
+  FaTwitter,
+  FaSnapchat,
+  FaTiktok,
+  FaLinkedin,
+  FaWhatsapp,
+  FaTelegram,
+} from "react-icons/fa"
 
 const CreativeFilter = () => {
-  const [activeFilter, setActiveFilter] = useState("all")
-  const [selectedService, setSelectedService] = useState("")
-  const [selectedCountry, setSelectedCountry] = useState("")
-  const [searchTerm, setSearchTerm] = useState("")
+  const [selectedService, setSelectedService] = useState<string | null>(null)
+  const [selectedCountry, setSelectedCountry] = useState<string | null>(null)
+  const [serviceSearch, setServiceSearch] = useState("")
+  const [countrySearch, setCountrySearch] = useState("")
 
-  const filterTypes = [
-    { id: "all", label: "All Services", icon: Zap, count: "2000+" },
-    { id: "sms", label: "SMS Verification", icon: MessageSquare, count: "500+" },
-    { id: "voice", label: "Voice Calls", icon: Phone, count: "200+" },
-    { id: "esim", label: "eSIM Data", icon: Wifi, count: "150+" },
-    { id: "rental", label: "Number Rental", icon: Smartphone, count: "300+" }
+  // 10+ services so left list scrolls
+  const services = [
+    { id: "google", name: "Google Messenger", count: 715028, icon: <FaGoogle /> },
+    { id: "instagram", name: "Instagram + Threads", count: 8028792, icon: <FaInstagram /> },
+    { id: "wechat", name: "WeChat", count: 6586033, icon: <FaWeixin /> },
+    { id: "facebook", name: "Facebook", count: 8994472, icon: <FaFacebook /> },
+    { id: "twitter", name: "Twitter (X)", count: 1200344, icon: <FaTwitter /> },
+    { id: "snapchat", name: "Snapchat", count: 450334, icon: <FaSnapchat /> },
+    { id: "tiktok", name: "TikTok", count: 788433, icon: <FaTiktok /> },
+    { id: "linkedin", name: "LinkedIn", count: 334899, icon: <FaLinkedin /> },
+    { id: "whatsapp", name: "WhatsApp", count: 909221, icon: <FaWhatsapp /> },
+    { id: "telegram", name: "Telegram", count: 502344, icon: <FaTelegram /> },
   ]
 
-  const popularServices = [
-    { id: "twitter", name: "Twitter", icon: Twitter, price: 0.15, category: "sms", rating: 4.9 },
-    { id: "telegram", name: "Telegram", icon: Send, price: 0.12, category: "sms", rating: 4.8 },
-    { id: "whatsapp", name: "WhatsApp", icon: MessageCircle, price: 0.18, category: "sms", rating: 4.9 },
-    { id: "gmail", name: "Gmail", icon: Mail, price: 0.10, category: "sms", rating: 4.7 },
-    { id: "instagram", name: "Instagram", icon: Instagram, price: 0.16, category: "sms", rating: 4.8 },
-    { id: "facebook", name: "Facebook", icon: Facebook, price: 0.14, category: "sms", rating: 4.6 },
-    { id: "linkedin", name: "LinkedIn", icon: Linkedin, price: 0.20, category: "sms", rating: 4.7 },
-    { id: "github", name: "GitHub", icon: Github, price: 0.13, category: "sms", rating: 4.8 }
+  // Many countries for scrolling — each service uses the same long list for demo
+  const manyCountries = [
+    { id: "us", name: "United States", flag: "🇺🇸", count: 19118, price: 46.09 },
+    { id: "uk", name: "United Kingdom", flag: "🇬🇧", count: 8000, price: 35.44 },
+    { id: "fr", name: "France", flag: "🇫🇷", count: 6200, price: 25.12 },
+    { id: "de", name: "Germany", flag: "🇩🇪", count: 7000, price: 28.33 },
+    { id: "ng", name: "Nigeria", flag: "🇳🇬", count: 5000, price: 9.99 },
+    { id: "in", name: "India", flag: "🇮🇳", count: 15000, price: 12.55 },
+    { id: "cn", name: "China", flag: "🇨🇳", count: 20000, price: 11.77 },
+    { id: "sg", name: "Singapore", flag: "🇸🇬", count: 4000, price: 18.22 },
+    { id: "br", name: "Brazil", flag: "🇧🇷", count: 8000, price: 14.44 },
+    { id: "es", name: "Spain", flag: "🇪🇸", count: 3500, price: 17.88 },
+    { id: "ca", name: "Canada", flag: "🇨🇦", count: 4100, price: 21.33 },
+    { id: "au", name: "Australia", flag: "🇦🇺", count: 4200, price: 29.99 },
+    { id: "jp", name: "Japan", flag: "🇯🇵", count: 3300, price: 31.22 },
   ]
 
-  const premiumCountries = [
-    { code: "US", name: "United States", flag: "🇺🇸", multiplier: 1.0, quality: "Premium" },
-    { code: "UK", name: "United Kingdom", flag: "🇬🇧", multiplier: 1.2, quality: "High" },
-    { code: "CA", name: "Canada", flag: "🇨🇦", multiplier: 1.1, quality: "Premium" },
-    { code: "DE", name: "Germany", flag: "🇩🇪", multiplier: 1.3, quality: "High" },
-    { code: "FR", name: "France", flag: "🇫🇷", multiplier: 1.25, quality: "High" },
-    { code: "JP", name: "Japan", flag: "🇯🇵", multiplier: 1.4, quality: "Premium" }
-  ]
+  // map each service to manyCountries for demo
+  const serviceCountries: Record<string, typeof manyCountries> = services.reduce(
+    (acc, s) => ((acc[s.id] = manyCountries), acc),
+    {} as Record<string, typeof manyCountries>
+  )
 
-  const filteredServices = popularServices.filter(service => {
-    const matchesSearch = service.name.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesFilter = activeFilter === "all" || service.category === activeFilter
-    return matchesSearch && matchesFilter
-  })
+  const filteredServices = services.filter((s) =>
+    s.name.toLowerCase().includes(serviceSearch.toLowerCase())
+  )
+
+  const filteredCountries =
+    selectedService && serviceCountries[selectedService]
+      ? serviceCountries[selectedService].filter((c) =>
+          c.name.toLowerCase().includes(countrySearch.toLowerCase())
+        )
+      : []
 
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Background Effects */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5" />
-      <div className="absolute top-0 left-1/4 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-secondary/10 rounded-full blur-3xl animate-pulse delay-1000" />
+    <section className="py-10 px-4 sm:px-6 lg:px-8">
+      <div className="grid md:grid-cols-2 gap-8 max-w-7xl mx-auto">
+        {/* SERVICES */}
+        <Card className="shadow-sm border rounded-xl">
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold">Choose a service</CardTitle>
+          </CardHeader>
 
-      <div className="max-w-7xl mx-auto relative">
-        <div className="text-center mb-12">
-          <Badge variant="secondary" className="mb-4 animate-bounce">
-            ⚡ AI-Powered Service Detection
-          </Badge>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-manrope font-bold mb-4">
-            <span className="bg-gradient-primary bg-clip-text text-transparent">
-              Intelligent Service
-            </span>
-            <br />
-            <span className="text-foreground">Discovery Engine</span>
-          </h2>
-          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-            Find the perfect communication solution with our advanced filtering system
-          </p>
-        </div>
+          <CardContent className="p-4">
+            {/* Search is sticky — stays in place */}
+            <div className="relative mb-3 sticky top-0  z-10 pt-2 pb-2">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search"
+                value={serviceSearch}
+                onChange={(e) => setServiceSearch(e.target.value)}
+                className="pl-9"
+              />
+            </div>
 
-        {/* Filter Tabs */}
-        <div className="flex flex-wrap justify-center gap-3 mb-8">
-          {filterTypes.map((filter) => {
-            const Icon = filter.icon
-            return (
-              <Button
-                key={filter.id}
-                variant={activeFilter === filter.id ? "default" : "glass"}
-                size="sm"
-                className="h-auto p-3 transition-all duration-300 hover:scale-105"
-                onClick={() => setActiveFilter(filter.id)}
-              >
-                <Icon className="h-4 w-4 mr-2" />
-                <div className="text-left">
-                  <div className="font-medium text-xs">{filter.label}</div>
-                  <div className="text-xs text-muted-foreground">{filter.count}</div>
+            {/* Scrollable list: only the list scrolls under the sticky search */}
+            <div className="max-h-[420px] overflow-y-auto space-y-2 pr-2">
+              {filteredServices.map((service) => {
+                const isSelected = selectedService === service.id
+
+                return (
+                  <button
+                    key={service.id}
+                    onClick={() => {
+                      setSelectedService(service.id)
+                      setSelectedCountry(null)
+                    }}
+                    aria-pressed={isSelected}
+                    className={`flex items-center justify-between w-full px-3 py-3 rounded-md border transition
+                      ${
+                        // SELECTED: light bg + black text (user requested click -> black text)
+                        isSelected
+                          ? "bg-gray-100 text-black border-black"
+                          : // DEFAULT (not selected): dark bg with white text; on hover -> light bg + black text
+                            "bg-neutral-900 text-white border-neutral-900 hover:bg-gray-100 hover:text-black hover:border-gray-300"
+                      }`}
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <span className="text-lg flex-shrink-0">{service.icon}</span>
+                      <div className="truncate">
+                        <div className="font-medium truncate">{service.name}</div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 ml-3 flex-shrink-0">
+                      <span className={`text-xs ${isSelected ? "text-black" : "text-opacity-80"}`}>
+                        {service.count.toLocaleString()} pcs
+                      </span>
+                      {/* small selection dot when selected */}
+                      {isSelected ? (
+                        <span className="w-3 h-3 rounded-full bg-black" />
+                      ) : (
+                        <span className="w-3 h-3 rounded-full border border-white/60" />
+                      )}
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* COUNTRIES */}
+        <Card className="shadow-sm border rounded-xl">
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold">Choose the country</CardTitle>
+          </CardHeader>
+
+          <CardContent className="p-4">
+            {selectedService ? (
+              <>
+                <div className="relative mb-3 sticky top-0  z-10 pt-2 pb-2">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search countries..."
+                    value={countrySearch}
+                    onChange={(e) => setCountrySearch(e.target.value)}
+                    className="pl-9"
+                  />
                 </div>
-              </Button>
-            )
-          })}
-        </div>
 
-        {/* Search Bar */}
-        <div className="max-w-md mx-auto mb-8">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search services..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 glass border-0 bg-background/50 backdrop-blur-sm"
-            />
-          </div>
-        </div>
+                <div className="max-h-[420px] overflow-y-auto space-y-2 pr-2">
+                  {filteredCountries.map((country) => {
+                    const isSelected = selectedCountry === country.id
 
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Services Grid */}
-          <Card className="glass border-0 overflow-hidden">
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Zap className="h-5 w-5 text-primary" />
-                Popular Services
-                <Badge variant="outline" className="ml-auto">
-                  {filteredServices.length} available
-                </Badge>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-3 max-h-64 overflow-y-auto">
-                {filteredServices.map((service) => {
-                  const Icon = service.icon
-                  return (
-                    <Button
-                      key={service.id}
-                      variant={selectedService === service.id ? "default" : "glass"}
-                      size="sm"
-                      className="h-auto p-3 justify-start transition-all duration-300 hover:scale-102"
-                      onClick={() => setSelectedService(service.id)}
-                    >
-                      <div className="flex items-center gap-2 w-full">
-                        <Icon className="h-4 w-4 flex-shrink-0" />
-                        <div className="text-left flex-1 min-w-0">
-                          <div className="font-medium text-xs truncate">{service.name}</div>
-                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                            <span>${service.price}</span>
-                            <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                            <span>{service.rating}</span>
+                    return (
+                      <div
+                        key={country.id}
+                        className={`flex items-center justify-between w-full px-3 py-3 rounded-md border transition
+                          ${
+                            isSelected
+                              ? "bg-gray-100 text-black border-black"
+                              : "bg-neutral-900 text-white border-neutral-900 hover:bg-gray-100 hover:text-black hover:border-gray-300"
+                          }`}
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <span className="text-xl flex-shrink-0">{country.flag}</span>
+                          <div className="truncate">
+                            <div className="font-medium truncate">{country.name}</div>
+                            <div className={`text-xs ${isSelected ? "text-black" : "text-white text-opacity-70"}`}>
+                              {country.count.toLocaleString()} pcs
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </Button>
-                  )
-                })}
-              </div>
-            </CardContent>
-          </Card>
 
-          {/* Countries & Pricing */}
-          <Card className="glass border-0 overflow-hidden">
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Globe2 className="h-5 w-5 text-primary" />
-                Premium Locations
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {premiumCountries.map((country) => (
-                  <Button
-                    key={country.code}
-                    variant={selectedCountry === country.code ? "default" : "glass"}
-                    size="sm"
-                    className="w-full h-auto p-3 justify-between transition-all duration-300 hover:scale-102"
-                    onClick={() => setSelectedCountry(country.code)}
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-lg">{country.flag}</span>
-                      <div className="text-left">
-                        <div className="font-medium text-sm">{country.name}</div>
-                        <div className="text-xs text-muted-foreground flex items-center gap-1">
-                          <Shield className="h-3 w-3" />
-                          {country.quality} Quality
+                        <div className="flex items-center gap-3 ml-3 flex-shrink-0">
+                          <span className={`font-medium ${isSelected ? "text-black" : "text-white"}`}>
+                            {country.price}₽
+                          </span>
+                          <Button
+                            size="sm"
+                            className={`text-xs px-3 py-1 ${
+                              isSelected ? "bg-black text-white hover:bg-gray-800" : "bg-black text-white hover:bg-gray-800"
+                            }`}
+                            onClick={() => setSelectedCountry(country.id)}
+                          >
+                            Buy
+                          </Button>
                         </div>
                       </div>
-                    </div>
-                    <Badge variant="outline" className="text-xs">
-                      {country.multiplier}x
-                    </Badge>
-                  </Button>
-                ))}
-              </div>
-
-              {/* Live Pricing */}
-              {selectedService && selectedCountry && (
-                <div className="mt-6 p-4 glass rounded-lg border border-primary/20 animate-slide-up">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <CreditCard className="h-4 w-4 text-primary" />
-                      <span className="font-medium text-sm">Live Pricing</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-xs text-success">
-                      <TrendingUp className="h-3 w-3" />
-                      Best Rate
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-xs">
-                      <span>Base Price:</span>
-                      <span>${popularServices.find(s => s.id === selectedService)?.price.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between text-xs">
-                      <span>Location Multiplier:</span>
-                      <span>{premiumCountries.find(c => c.code === selectedCountry)?.multiplier}x</span>
-                    </div>
-                    <div className="border-t border-border/50 pt-2 flex justify-between font-bold">
-                      <span>Total:</span>
-                      <span className="text-primary">
-                        ${((popularServices.find(s => s.id === selectedService)?.price || 0) * 
-                          (premiumCountries.find(c => c.code === selectedCountry)?.multiplier || 1)).toFixed(2)}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-2 mt-4">
-                    <Button variant="hero" size="sm" className="flex-1">
-                      <Clock className="h-3 w-3 mr-1" />
-                      Get Instantly
-                    </Button>
-                    <Button variant="glass" size="sm" className="flex-1">
-                      Add to Cart
-                    </Button>
-                  </div>
+                    )
+                  })}
                 </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+              </>
+            ) : (
+              <p className="text-sm text-muted-foreground italic">Please choose a service first</p>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </section>
   )

@@ -114,7 +114,7 @@ const Landing = () => {
       <Navbar />
       
       {/* Hero Section */}
-      <section className="pt-16 sm:pt-20 pb-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      <section className="pt-16 sm:pt-20 pb-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden mt-10">
         {/* Animated Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5" />
         <div className="absolute top-0 left-0 w-full h-full">
