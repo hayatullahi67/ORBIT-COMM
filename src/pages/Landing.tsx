@@ -5,7 +5,9 @@ import { Badge } from "@/components/ui/badge"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import Navbar from "@/components/layout/Navbar"
 import Footer from "@/components/layout/Footer"
-import SMSFilter from "@/components/SMSFilter"
+import HeroGlobe from "@/components/HeroGlobe"
+import CreativeFilter from "@/components/CreativeFilter"
+import CreativeHowItWorks from "@/components/CreativeHowItWorks"
 import { 
   Smartphone, 
   MessageSquare, 
@@ -17,7 +19,9 @@ import {
   Users,
   Clock,
   TrendingUp,
-  ChevronDown
+  ChevronDown,
+  Sparkles,
+  Rocket
 } from "lucide-react"
 
 const Landing = () => {
@@ -110,60 +114,94 @@ const Landing = () => {
       <Navbar />
       
       {/* Hero Section */}
-      <section className="pt-20 sm:pt-24 pb-12 sm:pb-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto text-center">
-          <Badge variant="secondary" className="mb-4 text-xs animate-pulse-glow">
-            🚀 Now with Global eSIM Support
-          </Badge>
-          
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-manrope font-bold mb-4 sm:mb-6 animate-slide-up leading-tight">
-            <span className="bg-gradient-primary bg-clip-text text-transparent">
-              Rent Virtual Numbers,
-            </span>
-            <br />
-            <span className="text-foreground">
-              Verify Instantly,
-            </span>
-            <br />
-            <span className="bg-gradient-secondary bg-clip-text text-transparent">
-              Connect Globally
-            </span>
-          </h1>
-          
-          <p className="text-sm sm:text-base lg:text-lg text-muted-foreground mb-6 sm:mb-8 max-w-2xl mx-auto animate-slide-up animate-delay-1">
-            Instant SMS verification, rental numbers, and eSIM activation — secure and reliable worldwide.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8 sm:mb-12 animate-slide-up animate-delay-2">
-            <Button variant="hero" size="lg" asChild className="text-sm">
-              <Link to="/auth/signup">
-                Get Started Free
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-            <Button variant="glass" size="lg" asChild className="text-sm">
-              <Link to="/pricing">View Pricing</Link>
-            </Button>
-          </div>
+      <section className="pt-16 sm:pt-20 pb-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        {/* Animated Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5" />
+        <div className="absolute top-0 left-0 w-full h-full">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/10 rounded-full blur-3xl animate-pulse delay-1000" />
+        </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 animate-slide-up animate-delay-3">
-            {stats.map((stat, index) => {
-              const Icon = stat.icon
-              return (
-                <div key={stat.label} className="glass rounded-lg p-3 sm:p-4">
-                  <Icon className="h-5 w-5 text-primary mx-auto mb-2" />
-                  <div className="text-lg sm:text-xl font-bold text-foreground">{stat.value}</div>
-                  <div className="text-xs text-muted-foreground">{stat.label}</div>
+        <div className="max-w-7xl mx-auto relative">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Hero Content */}
+            <div className="text-center lg:text-left">
+              <Badge variant="secondary" className="mb-6 animate-bounce">
+                <Rocket className="h-3 w-3 mr-1" />
+                Revolutionary Communication Platform
+              </Badge>
+              
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-manrope font-bold mb-6 animate-slide-up leading-tight">
+                <span className="bg-gradient-primary bg-clip-text text-transparent">
+                  Next-Gen Virtual
+                </span>
+                <br />
+                <span className="text-foreground">
+                  Communication
+                </span>
+                <br />
+                <span className="bg-gradient-secondary bg-clip-text text-transparent relative">
+                  Experience
+                  <Sparkles className="absolute -top-2 -right-2 h-6 w-6 text-yellow-400 animate-spin" />
+                </span>
+              </h1>
+              
+              <p className="text-base sm:text-lg lg:text-xl text-muted-foreground mb-8 max-w-xl animate-slide-up animate-delay-1">
+                Discover the future of instant verification, global connectivity, and seamless communication. 
+                <span className="text-primary font-semibold"> Experience technology that feels like magic.</span>
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8 animate-slide-up animate-delay-2">
+                <Button variant="hero" size="lg" className="group animate-pulse-glow" asChild>
+                  <Link to="/auth/signup">
+                    <Zap className="h-4 w-4 mr-2 group-hover:animate-spin" />
+                    Experience Magic
+                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                </Button>
+                <Button variant="glass" size="lg" asChild>
+                  <Link to="/pricing">Explore Pricing</Link>
+                </Button>
+              </div>
+
+              {/* Live Stats */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 animate-slide-up animate-delay-3">
+                {stats.map((stat, index) => {
+                  const Icon = stat.icon
+                  return (
+                    <div key={stat.label} className="text-center">
+                      <div className="glass rounded-lg p-3 mb-2 group hover:shadow-glow transition-all duration-300">
+                        <Icon className="h-5 w-5 text-primary mx-auto mb-1 group-hover:scale-110 transition-transform" />
+                        <div className="text-lg font-bold text-foreground">{stat.value}</div>
+                      </div>
+                      <div className="text-xs text-muted-foreground">{stat.label}</div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* 3D Globe */}
+            <div className="relative">
+              <HeroGlobe />
+              <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute top-4 left-4 glass p-2 rounded-lg animate-float">
+                  <MessageSquare className="h-4 w-4 text-primary" />
                 </div>
-              )
-            })}
+                <div className="absolute top-8 right-8 glass p-2 rounded-lg animate-float delay-1000">
+                  <Smartphone className="h-4 w-4 text-secondary" />
+                </div>
+                <div className="absolute bottom-8 left-8 glass p-2 rounded-lg animate-float delay-2000">
+                  <Globe className="h-4 w-4 text-accent" />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* SMS Filter */}
-      <SMSFilter />
+      {/* Creative Filter */}
+      <CreativeFilter />
 
       {/* Features Section */}
       <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
@@ -197,34 +235,8 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* How It Works */}
-      <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-muted/10">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-manrope font-bold mb-3">
-              How It <span className="bg-gradient-secondary bg-clip-text text-transparent">Works</span>
-            </h2>
-            <p className="text-sm sm:text-base text-muted-foreground">Get started in under 2 minutes</p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-            {howItWorks.map((step, index) => (
-              <div key={step.step} className="text-center animate-slide-up" style={{animationDelay: `${index * 0.1}s`}}>
-                <div className="relative mb-4 sm:mb-6">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-primary rounded-full flex items-center justify-center text-primary-foreground font-bold text-sm sm:text-base mx-auto">
-                    {step.step}
-                  </div>
-                  {index < howItWorks.length - 1 && (
-                    <div className="hidden lg:block absolute top-6 sm:top-7 left-12 sm:left-14 w-full h-0.5 bg-gradient-to-r from-primary to-transparent opacity-50" />
-                  )}
-                </div>
-                <h3 className="text-base sm:text-lg font-semibold mb-2">{step.title}</h3>
-                <p className="text-xs sm:text-sm text-muted-foreground">{step.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Creative How It Works */}
+      <CreativeHowItWorks />
 
       {/* FAQ Section */}
       <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
