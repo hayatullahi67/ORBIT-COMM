@@ -113,13 +113,14 @@ const Landing = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      {/* Hero Section */}
-      <section className="pt-16 sm:pt-20 pb-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden mt-10">
+      {/* Enhanced Hero Section */}
+      <section className="pt-16 sm:pt-20 pb-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden mt-10">
         {/* Animated Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5" />
-        <div className="absolute top-0 left-0 w-full h-full">
+        <div className="absolute inset-0 overflow-hidden">
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse" />
           <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/10 rounded-full blur-3xl animate-pulse delay-1000" />
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-2xl animate-float" />
         </div>
 
         <div className="max-w-7xl mx-auto relative">

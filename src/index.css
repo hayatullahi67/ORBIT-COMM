@@ -7,7 +7,80 @@
 
 @layer base {
   :root {
-    /* Dark Base Colors */
+    /* Light Mode - White & Blue Theme */
+    --background: 0 0% 100%;
+    --foreground: 222 84% 4.9%;
+
+    /* Clean White Cards */
+    --card: 0 0% 100%;
+    --card-foreground: 222 84% 4.9%;
+    --card-glass: 0 0% 98%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 84% 4.9%;
+
+    /* Electric Blue Primary - 247Sim.net Brand */
+    --primary: 207 90% 54%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 207 90% 65%;
+
+    /* Deep Blue Secondary */
+    --secondary: 214 100% 35%;
+    --secondary-foreground: 0 0% 100%;
+    --secondary-glow: 214 100% 45%;
+
+    /* Light Variants */
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 210 40% 96%;
+    --accent-foreground: 214 100% 35%;
+
+    /* Status Colors */
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+    
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Interactive Elements */
+    --border: 214 32% 91%;
+    --input: 0 0% 100%;
+    --ring: 207 90% 54%;
+
+    /* Design System Tokens */
+    --radius: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-xl: 1.5rem;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--primary)));
+    --gradient-glass: linear-gradient(135deg, 
+      hsla(0, 0%, 100%, 0.8), 
+      hsla(0, 0%, 100%, 0.4)
+    );
+    --gradient-border: linear-gradient(135deg, 
+      hsla(var(--primary), 0.3), 
+      hsla(var(--secondary), 0.3)
+    );
+
+    /* Shadows & Glows */
+    --shadow-glow: 0 0 40px hsla(var(--primary), 0.15);
+    --shadow-glow-lg: 0 0 60px hsla(var(--primary), 0.2);
+    --shadow-card: 0 4px 32px hsla(0, 0%, 0%, 0.08);
+    --shadow-glass: 0 8px 32px hsla(0, 0%, 0%, 0.06);
+
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  .dark {
+    /* Dark Mode - Dark & Blue Theme */
     --background: 222 47% 4%;
     --foreground: 210 40% 98%;
 
@@ -19,7 +92,7 @@
     --popover: 222 47% 6%;
     --popover-foreground: 210 40% 98%;
 
-    /* Electric Blue Primary - 24/7 Does Next Brand */
+    /* Electric Blue Primary - Same for consistency */
     --primary: 207 90% 54%;
     --primary-foreground: 222 47% 4%;
     --primary-glow: 207 90% 65%;
@@ -29,12 +102,12 @@
     --secondary-foreground: 210 40% 98%;
     --secondary-glow: 214 100% 45%;
 
-    /* Subtle Variants */
+    /* Dark Variants */
     --muted: 222 47% 10%;
     --muted-foreground: 215 20% 65%;
 
-    --accent: 0 0% 100%;
-    --accent-foreground: 214 100% 35%;
+    --accent: 222 47% 8%;
+    --accent-foreground: 210 40% 98%;
 
     /* Status Colors */
     --success: 142 71% 45%;
@@ -49,88 +122,15 @@
     /* Interactive Elements */
     --border: 222 47% 15%;
     --input: 222 47% 8%;
-    --ring: 217 91% 60%;
+    --ring: 207 90% 54%;
 
-    /* Design System Tokens */
-    --radius: 0.75rem;
-    --radius-lg: 1rem;
-    --radius-xl: 1.5rem;
-
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
-    --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--primary)));
+    /* Gradients for Dark Mode */
     --gradient-glass: linear-gradient(135deg, 
-      hsla(var(--card-glass), 0.4), 
-      hsla(var(--card-glass), 0.1)
+      hsla(var(--card-glass), 0.6), 
+      hsla(var(--card-glass), 0.2)
     );
-    --gradient-border: linear-gradient(135deg, 
-      hsla(var(--primary), 0.3), 
-      hsla(var(--accent), 0.3)
-    );
-
-    /* Shadows & Glows */
-    --shadow-glow: 0 0 40px hsla(var(--primary), 0.15);
-    --shadow-glow-lg: 0 0 60px hsla(var(--primary), 0.2);
-    --shadow-card: 0 8px 32px hsla(0, 0%, 0%, 0.3);
-    --shadow-glass: 0 8px 32px hsla(0, 0%, 0%, 0.2);
-
-    /* Animations */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --shadow-card: 0 8px 32px hsla(0, 0%, 0%, 0.4);
+    --shadow-glass: 0 8px 32px hsla(0, 0%, 0%, 0.3);
   }
 }
 
@@ -140,9 +140,8 @@
   }
 
   body {
-    @apply bg-background text-foreground font-inter;
-    background: radial-gradient(ellipse at top, hsl(var(--primary) / 0.1), transparent 50%),
-                hsl(var(--background));
+    @apply bg-background text-foreground font-inter transition-colors duration-300;
+    background: hsl(var(--background));
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -199,16 +198,28 @@
     border-radius: var(--radius-lg);
   }
 
-  .gradient-border::before {
-    content: '';
-    position: absolute;
-    inset: 1px;
-    background: hsl(var(--card));
-    border-radius: inherit;
-  }
 }
 
 @layer components {
+  /* Custom Scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+    border-radius: 3px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary));
+    border-radius: 3px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary-glow));
+  }
+
   /* Animation keyframes */
   @keyframes float {
     0%, 100% { transform: translateY(0px); }
