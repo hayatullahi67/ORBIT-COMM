@@ -1,15 +1,17 @@
 import { useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 import { Button } from "@/components/ui/button"
-import { Smartphone, Menu, X, Globe, Shield, Zap } from "lucide-react"
+import { Smartphone, Menu, X, Globe, Shield, Zap, Moon, Sun } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useTheme } from "next-themes"
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const location = useLocation()
+  const { theme, setTheme } = useTheme()
 
   const navItems = [
-    { name: "Services", href: "/pricing", icon: Zap },
+    { name: "Services", href: "/services", icon: Zap },
     { name: "API Docs", href: "/api-docs", icon: Globe },
     { name: "Support", href: "/contact", icon: Shield },
   ]
@@ -27,7 +29,7 @@ const Navbar = () => {
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-accent rounded-full animate-pulse" />
             </div>
             <span className="text-xl font-manrope font-bold bg-gradient-primary bg-clip-text text-transparent">
-              24/7 Does Next
+              247Sim.net
             </span>
           </Link>
 
@@ -51,8 +53,15 @@ const Navbar = () => {
             })}
           </div>
 
-          {/* Auth Buttons */}
+          {/* Theme Toggle & Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            >
+              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </Button>
             <Button variant="ghost" asChild>
               <Link to="/auth/login">Sign In</Link>
             </Button>

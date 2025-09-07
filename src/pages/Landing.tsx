@@ -131,36 +131,31 @@ const Landing = () => {
                 Revolutionary Communication Platform
               </Badge>
               
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-manrope font-bold mb-6 animate-slide-up leading-tight">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-manrope font-bold mb-6 animate-slide-up leading-tight">
                 <span className="bg-gradient-primary bg-clip-text text-transparent">
-                  24/7 Does Next
+                  247Sim.net
                 </span>
                 <br />
-                <span className="text-foreground">
-                  Communications
-                </span>
-                <br />
-                <span className="bg-gradient-secondary bg-clip-text text-transparent relative">
-                  Platform
-                  <Sparkles className="absolute -top-2 -right-2 h-6 w-6 text-yellow-400 animate-spin" />
+                <span className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-foreground/90">
+                  Virtual Numbers for Receiving SMS
                 </span>
               </h1>
               
-              <p className="text-base sm:text-lg lg:text-xl text-muted-foreground mb-8 max-w-xl animate-slide-up animate-delay-1">
-                Discover the future of instant verification, global connectivity, and seamless communication. 
-                <span className="text-primary font-semibold"> Experience technology that feels like magic.</span>
+              <p className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-2xl animate-slide-up animate-delay-1">
+                For buy virtual mobile number for sms verification you do not need to enter any personal data. 
+                <span className="text-primary font-semibold">It is enough to register by e-mail.</span>
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8 animate-slide-up animate-delay-2">
                 <Button variant="hero" size="lg" className="group animate-pulse-glow" asChild>
-                  <Link to="/auth/signup">
-                    <Zap className="h-4 w-4 mr-2 group-hover:animate-spin" />
-                    Experience Magic
+                  <Link to="/services">
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    Get Virtual Number
                     <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </Button>
                 <Button variant="glass" size="lg" asChild>
-                  <Link to="/pricing">Explore Pricing</Link>
+                  <Link to="/auth/signup">Create Account</Link>
                 </Button>
               </div>
 
@@ -200,8 +195,21 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Creative Filter */}
-      <CreativeFilter />
+      {/* Service Preview */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/20">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl font-manrope font-bold mb-6">
+            Over <span className="text-primary">500,000</span> Numbers from <span className="text-primary">180+</span> Countries
+          </h2>
+          <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
+            Access virtual numbers from around the world for instant SMS verification. 
+            No personal data required - just register with your email.
+          </p>
+          <Button variant="hero" size="lg" asChild>
+            <Link to="/services">Browse All Services</Link>
+          </Button>
+        </div>
+      </section>
 
       {/* Features Section */}
       <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
