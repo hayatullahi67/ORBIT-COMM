@@ -26,8 +26,8 @@ const Navbar = () => {
               <Smartphone className="h-8 w-8 text-primary" />
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-accent rounded-full animate-pulse" />
             </div>
-            <span className="text-xl font-space font-bold bg-gradient-primary bg-clip-text text-transparent">
-              VirtualSIM
+            <span className="text-xl font-manrope font-bold bg-gradient-primary bg-clip-text text-transparent">
+              24/7 Does Next
             </span>
           </Link>
 

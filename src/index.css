@@ -19,22 +19,22 @@
     --popover: 222 47% 6%;
     --popover-foreground: 210 40% 98%;
 
-    /* Electric Blue Primary */
-    --primary: 217 91% 60%;
+    /* Electric Blue Primary - 24/7 Does Next Brand */
+    --primary: 207 90% 54%;
     --primary-foreground: 222 47% 4%;
-    --primary-glow: 217 91% 70%;
+    --primary-glow: 207 90% 65%;
 
-    /* Purple Secondary */
-    --secondary: 258 90% 66%;
+    /* Deep Blue Secondary */
+    --secondary: 214 100% 35%;
     --secondary-foreground: 210 40% 98%;
-    --secondary-glow: 258 90% 76%;
+    --secondary-glow: 214 100% 45%;
 
     /* Subtle Variants */
     --muted: 222 47% 10%;
     --muted-foreground: 215 20% 65%;
 
-    --accent: 272 91% 65%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 0 0% 100%;
+    --accent-foreground: 214 100% 35%;
 
     /* Status Colors */
     --success: 142 71% 45%;
