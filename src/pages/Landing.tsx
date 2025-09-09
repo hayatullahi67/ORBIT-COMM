@@ -179,7 +179,7 @@ const Landing = () => {
 
             {/* 3D Globe */}
             <div className="relative">
-              {/* <HeroGlobe /> */}
+              <HeroGlobe />
               <div className="absolute inset-0 pointer-events-none">
                 <div className="absolute top-4 left-4 glass p-2 rounded-lg animate-float">
                   <MessageSquare className="h-4 w-4 text-primary" />
