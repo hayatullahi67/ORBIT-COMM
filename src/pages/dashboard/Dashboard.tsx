@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -18,8 +18,25 @@ import {
 } from "lucide-react"
 
 const Dashboard = () => {
-  const [balance] = useState(45.67)
-  
+  const [balance, setBalance] = useState<number>(0)
+
+  useEffect(() => {
+    const fetchBalance = async () => {
+      try {
+        const res = await fetch("https://api.tiger-sms.com/stubs/handler_api.php?api_key=VfFeLex22JhqGaCEfeJnhn4vwRpjdMTv&action=getBalance")
+        const text = await res.text()
+        // The API returns something like: ACCESS_BALANCE:45.67
+        const match = text.match(/ACCESS_BALANCE:(\d+(\.\d+)?)/)
+        if (match) {
+          setBalance(parseFloat(match[1]))
+        }
+      } catch (e) {
+        // Optionally handle error, but keep UI unaffected
+      }
+    }
+    fetchBalance()
+  }, [])
+
   const recentMessages = [
     {
       id: 1,

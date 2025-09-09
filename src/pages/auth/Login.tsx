@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -10,20 +10,54 @@ import { Smartphone, Eye, EyeOff, ArrowLeft } from "lucide-react"
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({
-    email: "",
+    username: "",
     password: "",
     rememberMe: false
   })
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const navigate = useNavigate()
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // TODO: Implement login logic
-    console.log("Login form submitted:", formData)
+    setLoading(true)
+    setError(null)
+    try {
+      // 1. Login and get token
+      const response = await fetch("https://comiun.onrender.com/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: formData.username,
+          password: formData.password,
+        }),
+      })
+      const data = await response.json()
+      if (!response.ok) throw new Error(data.message || "Login failed")
+      const token = data.token
+
+      // 2. Confirm login by calling protected route
+      const protectedRes = await fetch("https://comiun.onrender.com/api/auth/protected", {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      if (!protectedRes.ok) throw new Error("Token invalid or login confirmation failed")
+
+      // 3. Optionally store token (localStorage/sessionStorage)
+      // localStorage.setItem("token", token)
+
+      // 4. Redirect to home/dashboard
+      navigate("/dashboard")
+    } catch (err: any) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -60,13 +94,13 @@ const Login = () => {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
+                <Label htmlFor="username">Username</Label>
                 <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="your@email.com"
-                  value={formData.email}
+                  id="username"
+                  name="username"
+                  type="text"
+                  placeholder="Enter your username"
+                  value={formData.username}
                   onChange={handleInputChange}
                   required
                   className="glass"
@@ -117,8 +151,10 @@ const Login = () => {
                 </Link>
               </div>
 
-              <Button type="submit" variant="hero" className="w-full">
-                Sign In
+              {error && <div className="text-red-500 text-sm">{error}</div>}
+
+              <Button type="submit" variant="hero" className="w-full" disabled={loading}>
+                {loading ? "Signing In..." : "Sign In"}
               </Button>
             </form>
 

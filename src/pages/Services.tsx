@@ -20,6 +20,7 @@ import {
   Users,
   Shield
 } from "lucide-react"
+import { FaWhatsapp, FaTelegramPlane, FaTwitter, FaInstagram, FaFacebook, FaDiscord, FaGoogle, FaAmazon } from "react-icons/fa"
 
 const Services = () => {
   const [selectedService, setSelectedService] = useState("")
@@ -29,14 +30,14 @@ const Services = () => {
   const [hoveredCountry, setHoveredCountry] = useState("")
 
   const services = [
-    { id: "whatsapp", name: "WhatsApp", icon: "💬", price: "$0.25", popular: true },
-    { id: "telegram", name: "Telegram", icon: "✈️", price: "$0.20", popular: true },
-    { id: "twitter", name: "Twitter", icon: "🐦", price: "$0.30", popular: true },
-    { id: "instagram", name: "Instagram", icon: "📸", price: "$0.35", popular: false },
-    { id: "facebook", name: "Facebook", icon: "📘", price: "$0.40", popular: false },
-    { id: "discord", name: "Discord", icon: "🎮", price: "$0.25", popular: false },
-    { id: "google", name: "Google", icon: "🔍", price: "$0.30", popular: true },
-    { id: "amazon", name: "Amazon", icon: "📦", price: "$0.45", popular: false },
+    { id: "whatsapp", name: "WhatsApp", icon: <FaWhatsapp className="text-green-500 m-[auto]" />, price: "$0.25", popular: true },
+    { id: "telegram", name: "Telegram", icon: <FaTelegramPlane className="text-blue-400 m-[auto]" />, price: "$0.20", popular: true },
+    { id: "twitter", name: "Twitter", icon: <FaTwitter className="text-blue-500 m-[auto]" />, price: "$0.30", popular: true },
+    { id: "instagram", name: "Instagram", icon: <FaInstagram className="text-pink-500 m-[auto]" />, price: "$0.35", popular: false },
+    { id: "facebook", name: "Facebook", icon: <FaFacebook className="text-blue-700 m-[auto]" />, price: "$0.40", popular: false },
+    { id: "discord", name: "Discord", icon: <FaDiscord className="text-indigo-500 m-[auto]" />, price: "$0.25", popular: false },
+    { id: "google", name: "Google", icon: <FaGoogle className="text-red-500 m-[auto]" />, price: "$0.30", popular: true },
+    { id: "amazon", name: "Amazon", icon: <FaAmazon className="text-yellow-600 m-[auto]" />, price: "$0.45", popular: false },
   ]
 
   const countries = [

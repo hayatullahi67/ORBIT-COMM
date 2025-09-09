@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Link } from "react-router-dom"
+import { Link , useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -11,22 +11,53 @@ const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [formData, setFormData] = useState({
+    username: "",
     email: "",
     password: "",
     confirmPassword: "",
     referralCode: "",
     agreeToTerms: false
   })
-
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState(false)
+  const navigate = useNavigate()
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // TODO: Implement signup logic
-    console.log("Signup form submitted:", formData)
+    setLoading(true)
+    setError(null)
+    setSuccess(false)
+    try {
+      // Replace with your actual API endpoint and payload
+      const response = await fetch("https://comiun.onrender.com/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
+          referralCode: formData.referralCode,
+        }),
+      })
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.message || "Signup failed")
+      }
+      setSuccess(true)
+      setTimeout(() => {
+        navigate("/auth/login") // <-- redirect to login after success
+      }, 1500)
+      // Optionally redirect or show a message
+    } catch (err: any) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -62,6 +93,19 @@ const SignUp = () => {
 
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+        <Label htmlFor="username">Username</Label>
+        <Input
+          id="username"
+          name="username"
+          type="text"
+          placeholder="Choose a username"
+          value={formData.username}
+          onChange={handleInputChange}
+          required
+          className="glass"
+        />
+      </div>
               <div className="space-y-2">
                 <Label htmlFor="email">Email Address</Label>
                 <Input
@@ -154,13 +198,15 @@ const SignUp = () => {
                 </Label>
               </div>
 
+              {error && <div className="text-red-500 text-sm">{error}</div>}
+              {success && <div className="text-green-600 text-sm">Signup successful!</div>}
               <Button 
                 type="submit" 
                 variant="hero" 
                 className="w-full" 
-                disabled={!formData.agreeToTerms}
+                disabled={!formData.agreeToTerms || loading}
               >
-                Create Account
+                {loading ? "Creating..." : "Create Account"}
               </Button>
             </form>
 
