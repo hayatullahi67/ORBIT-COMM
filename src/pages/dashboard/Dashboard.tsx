@@ -23,7 +23,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchBalance = async () => {
       try {
-        const res = await fetch("https://api.tiger-sms.com/stubs/handler_api.php?api_key=VfFeLex22JhqGaCEfeJnhn4vwRpjdMTv&action=getBalance")
+        const res = await fetch("/api/tiger-sms?api_key=BJ93bFKepOfAjB5cELEDaKfDJyE5p9C1&action=getBalance")
         const text = await res.text()
         // The API returns something like: ACCESS_BALANCE:45.67
         const match = text.match(/ACCESS_BALANCE:(\d+(\.\d+)?)/)

@@ -1,5 +1,5 @@
-import { useState } from "react"
-import { Link, useLocation } from "react-router-dom"
+import { useState, useEffect } from "react"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -22,18 +22,61 @@ import {
   LogOut,
   User,
   Menu,
+  LogIn,
   X,
   Bell,
   Wallet
 } from "lucide-react"
+import { useTheme } from "next-themes"
+
 
 interface DashboardLayoutProps {
   children: React.ReactNode
 }
 
+interface User {
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [user, setUser] = useState<User | null>(null);
   const location = useLocation()
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/auth/login");
+        return;
+      }
+
+      try {
+        const response = await fetch("https://comiun.onrender.com/api/auth/current_user", {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setUser(data);
+        } else {
+          console.error("Failed to fetch user data, logging out.");
+          // Token might be invalid or expired, clear it and redirect to login
+          localStorage.removeItem("token");
+          navigate("/auth/login");
+        }
+      } catch (error) {
+        console.error("Error fetching current user:", error);
+      }
+    };
+
+    fetchCurrentUser();
+  }, [navigate]);
 
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: Home },
@@ -45,6 +88,38 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   ]
 
   const isActive = (path: string) => location.pathname === path
+
+  const handleLogout = async () => {
+    setSidebarOpen(false);
+    const token = localStorage.getItem("token");
+
+    // If no token exists, just redirect to login
+    if (!token) {
+      navigate("/auth/login");
+      return;
+    }
+
+    try {
+      const response = await fetch("https://comiun.onrender.com/api/auth/logout", {
+        method: "POST", // Using POST is a common practice for logout
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        // Log an error if the server-side logout fails, but proceed with client-side logout
+        console.error("Server logout failed:", response.status);
+      }
+    } catch (error) {
+      console.error("Logout request failed:", error);
+    } finally {
+      // Always remove the token and redirect to login, regardless of server response
+      localStorage.removeItem("token");
+      navigate("/auth/login");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -114,12 +189,18 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="w-full justify-start p-2">
                   <Avatar className="h-8 w-8 mr-3">
-                    <AvatarImage src="/placeholder-avatar.png" />
-                    <AvatarFallback>JD</AvatarFallback>
+                    <AvatarImage src="/placeholder-avatar.png" alt={user ? `${user.firstName} ${user.lastName}` : 'User'} />
+                    <AvatarFallback>
+                      {user ? `${user.firstName.charAt(0)}${user.lastName.charAt(0)}` : 'U'}
+                    </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 text-left">
-                    <p className="text-sm font-medium">John Doe</p>
-                    <p className="text-xs text-muted-foreground">john@example.com</p>
+                    <p className="text-sm font-medium">
+                      {user ? `${user.firstName} ${user.lastName}` : "Loading..."}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {user ? user.email : "..."}
+                    </p>
                   </div>
                 </Button>
               </DropdownMenuTrigger>
@@ -138,13 +219,15 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                     Billing
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Sign out
-                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+            <Button 
+              variant="ghost" 
+              className="w-full justify-start p-2 mt-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10" 
+              onClick={handleLogout}>
+              <LogOut className="mr-3 h-4 w-4" />
+              Sign Out
+            </Button>
           </div>
         </div>
       </div>
