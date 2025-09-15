@@ -8,6 +8,13 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    proxy: {
+      "/api/tiger-sms": {
+        target: "https://api.tiger-sms.com",
+        changeOrigin: true,
+        rewrite: path => path.replace(/^\/api\/tiger-sms/, "/stubs/handler_api.php"),
+      },
+    },
   },
   plugins: [
     react(),

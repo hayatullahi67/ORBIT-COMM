@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Smartphone, Eye, EyeOff, ArrowLeft } from "lucide-react"
+import { Smartphone, Eye, EyeOff, ArrowLeft, CheckCircle } from "lucide-react"
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false)
@@ -49,9 +50,6 @@ const SignUp = () => {
         throw new Error(data.message || "Signup failed")
       }
       setSuccess(true)
-      setTimeout(() => {
-        navigate("/auth/login") // <-- redirect to login after success
-      }, 1500)
       // Optionally redirect or show a message
     } catch (err: any) {
       setError(err.message)
@@ -63,6 +61,27 @@ const SignUp = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       {/* Background Elements */}
+      <Dialog open={success} onOpenChange={(isOpen) => {
+        if (!isOpen) {
+          setSuccess(false);
+          navigate("/auth/login");
+        }
+      }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <CheckCircle className="h-6 w-6 text-green-500" />
+              Signup Successful!
+            </DialogTitle>
+            <DialogDescription className="pt-4 text-base">
+              Please check your email for a verification link. Also, check your spam folder. You need to verify your email before you can log in.
+            </DialogDescription>
+          </DialogHeader>
+          <Button onClick={() => navigate("/auth/login")} className="mt-4 w-full">
+            Go to Login
+          </Button>
+        </DialogContent>
+      </Dialog>
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/20 rounded-full blur-3xl animate-pulse" />
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-accent/20 rounded-full blur-3xl animate-pulse" />
@@ -199,7 +218,6 @@ const SignUp = () => {
               </div>
 
               {error && <div className="text-red-500 text-sm">{error}</div>}
-              {success && <div className="text-green-600 text-sm">Signup successful!</div>}
               <Button 
                 type="submit" 
                 variant="hero" 

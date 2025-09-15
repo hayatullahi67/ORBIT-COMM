@@ -49,7 +49,7 @@ const Login = () => {
       if (!protectedRes.ok) throw new Error("Token invalid or login confirmation failed")
 
       // 3. Optionally store token (localStorage/sessionStorage)
-      // localStorage.setItem("token", token)
+      localStorage.setItem("token", token)
 
       // 4. Redirect to home/dashboard
       navigate("/dashboard")
