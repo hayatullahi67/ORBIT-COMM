@@ -1,14 +1,14 @@
 // POST /api/esim-purchase
 // Handles purchase for both DATA-ONLY and DATA-VOICE-SMS packages
 
-import { makeAuthenticatedRequest } from './esim-auth.js';
+const { makeAuthenticatedRequest } = require('./esim-auth.js');
 
 const ESIM_API_BASE = 'https://esimcard.com/api/developer/reseller';
 
 // In-memory storage for order mappings (use database in production)
-export const orderMappings = new Map();
+const orderMappings = new Map();
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -109,3 +109,6 @@ export default async function handler(req, res) {
     });
   }
 }
+module.
+exports = handler;
+module.exports.orderMappings = orderMappings;

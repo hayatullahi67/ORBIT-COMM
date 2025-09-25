@@ -1,12 +1,12 @@
 // GET /api/esim-purchase-status?local_id=XXX
 // Looks up local mapping and proxies to https://esimcard.com/api/developer/reseller/purchase/{purchase_id}
 
-import { makeAuthenticatedRequest } from './esim-auth.js';
-import { orderMappings } from './esim-purchase.js';
+const { makeAuthenticatedRequest } = require('./esim-auth.js');
+const { orderMappings } = require('./esim-purchase.js');
 
 const ESIM_API_BASE = 'https://esimcard.com/api/developer/reseller';
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');

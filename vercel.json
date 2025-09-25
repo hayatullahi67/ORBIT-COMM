@@ -30,10 +30,5 @@
     "api/esim-webhook.js": {
       "maxDuration": 30
     }
-  },
-  "env": {
-    "PAYSTACK_SECRET_KEY": "@paystack_secret_key",
-    "ESIM_EMAIL": "@esim_email",
-    "ESIM_PASSWORD": "@esim_password"
   }
 }

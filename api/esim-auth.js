@@ -6,7 +6,7 @@ let tokenExpiry = null;
 
 const ESIM_API_BASE = 'https://esimcard.com/api/developer/reseller';
 
-export const getAccessToken = async () => {
+const getAccessToken = async () => {
   // Check if we have a valid cached token
   if (cachedToken && tokenExpiry && Date.now() < tokenExpiry) {
     return cachedToken;
@@ -43,7 +43,7 @@ export const getAccessToken = async () => {
   }
 };
 
-export const makeAuthenticatedRequest = async (url, options = {}) => {
+const makeAuthenticatedRequest = async (url, options = {}) => {
   const token = await getAccessToken();
   
   return fetch(url, {
@@ -55,4 +55,9 @@ export const makeAuthenticatedRequest = async (url, options = {}) => {
       ...options.headers
     }
   });
+};
+
+module.exports = {
+  getAccessToken,
+  makeAuthenticatedRequest
 };

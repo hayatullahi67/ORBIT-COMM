@@ -1,11 +1,11 @@
 // GET /api/esim-countries 
 // Proxies to https://esimcard.com/api/developer/reseller/packages/country
 
-import { makeAuthenticatedRequest } from './esim-auth.js';
+const { makeAuthenticatedRequest } = require('./esim-auth.js');
 
 const ESIM_API_BASE = 'https://esimcard.com/api/developer/reseller';
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
