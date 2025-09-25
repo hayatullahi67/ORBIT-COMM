@@ -81,8 +81,8 @@ const MyNumbers = () => {
     }
   }, [numbers]);
 
-  const filteredNumbers = numbers.filter(number => 
-    number.number.includes(searchTerm) || 
+  const filteredNumbers = numbers.filter(number =>
+    number.number.includes(searchTerm) ||
     number.country.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
@@ -415,7 +415,7 @@ const MyNumbers = () => {
       const ref = 'orbit-comm';
 
       const response = await fetch(`/api/tiger-sms?api_key=${API_KEY}&action=getNumber&service=${serviceCode}&country=${countryCode}&ref=${ref}`);
-      
+
       if (!response.ok) {
         throw new Error('Network response was not ok.');
       }
@@ -617,7 +617,7 @@ const MyNumbers = () => {
                         onClick={() => handleCountrySelect(country)}
                         className="w-full flex items-center p-2 rounded-md hover:bg-muted/50 transition-colors text-left"
                       >
-                      <span className="mr-3 text-lg">{getFlagEmoji(countryCodeToIso[country.code] || 'XX')}</span>
+                        <span className="mr-3 text-lg">{getFlagEmoji(countryCodeToIso[country.code] || 'XX')}</span>
                         <span>{country.name}</span>
                       </button>
                     ))}
