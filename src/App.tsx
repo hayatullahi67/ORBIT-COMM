@@ -14,6 +14,7 @@ import Login from "./pages/auth/Login";
 import Dashboard from "./pages/dashboard/Dashboard";
 import MyNumbers from "./pages/dashboard/MyNumbers";
 import MyESIMs from "./pages/dashboard/MyESIMs";
+// import BuyESIM from "./pages/dashboard/BuyESIM";
 import Transactions from "./pages/dashboard/Transactions";
 import APIAccess from "./pages/dashboard/APIAccess";
 import Settings from "./pages/dashboard/Settings";
@@ -43,6 +44,7 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/numbers" element={<MyNumbers />} />
           <Route path="/dashboard/esims" element={<MyESIMs />} />
+          {/* <Route path="/dashboard/buy-esim" element={<BuyESIM />} /> */}
           <Route path="/dashboard/transactions" element={<Transactions />} />
           <Route path="/dashboard/api" element={<APIAccess />} />
           <Route path="/dashboard/settings" element={<Settings />} />

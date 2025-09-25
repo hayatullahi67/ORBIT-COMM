@@ -191,7 +191,9 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                   <Avatar className="h-8 w-8 mr-3">
                     <AvatarImage src="/placeholder-avatar.png" alt={user ? `${user.firstName} ${user.lastName}` : 'User'} />
                     <AvatarFallback>
-                      {user ? `${user.firstName.charAt(0)}${user.lastName.charAt(0)}` : 'U'}
+                      {user && user.firstName && user.lastName
+                        ? `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`
+                        : 'U'}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 text-left">
