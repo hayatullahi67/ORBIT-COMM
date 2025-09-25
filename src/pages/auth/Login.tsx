@@ -41,17 +41,10 @@ const Login = () => {
       if (!response.ok) throw new Error(data.message || "Login failed")
       const token = data.token
 
-      // 2. Confirm login by calling protected route
-      const protectedRes = await fetch("https://comiun.onrender.com/api/auth/protected", {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      if (!protectedRes.ok) throw new Error("Token invalid or login confirmation failed")
-
-      // 3. Optionally store token (localStorage/sessionStorage)
+      // 2. Store token (localStorage/sessionStorage)
       localStorage.setItem("token", token)
 
-      // 4. Redirect to home/dashboard
+      // 3. Redirect to home/dashboard
       navigate("/dashboard")
     } catch (err: any) {
       setError(err.message)
