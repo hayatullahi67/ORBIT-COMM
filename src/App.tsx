@@ -30,37 +30,37 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<Landing />} />
-          <Route path="/index" element={<Landing />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/pricing" element={<Pricing />} />
-          
-          {/* Auth Routes */}
-          <Route path="/auth/signup" element={<SignUp />} />
-          <Route path="/auth/login" element={<Login />} />
-          
-          {/* Dashboard Routes */}
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/dashboard/numbers" element={<MyNumbers />} />
-          <Route path="/dashboard/esims" element={<MyESIMs />} />
-          {/* <Route path="/dashboard/buy-esim" element={<BuyESIM />} /> */}
-          <Route path="/dashboard/transactions" element={<Transactions />} />
-          <Route path="/dashboard/api" element={<APIAccess />} />
-          <Route path="/dashboard/settings" element={<Settings />} />
-          
-          {/* Static Pages */}
-          <Route path="/about" element={<NotFound />} />
-          <Route path="/contact" element={<NotFound />} />
-          <Route path="/faq" element={<NotFound />} />
-          <Route path="/api-docs" element={<NotFound />} />
-          <Route path="/affiliate" element={<NotFound />} />
-          <Route path="/privacy" element={<NotFound />} />
-          <Route path="/terms" element={<NotFound />} />
-          <Route path="/status" element={<NotFound />} />
-          
-          {/* Catch-all */}
-          <Route path="*" element={<NotFound />} />
+            {/* Public Routes */}
+            <Route path="/" element={<Landing />} />
+            <Route path="/index" element={<Landing />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/pricing" element={<Pricing />} />
+
+            {/* Auth Routes */}
+            <Route path="/auth/signup" element={<SignUp />} />
+            <Route path="/auth/login" element={<Login />} />
+
+            {/* Dashboard Routes */}
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard/numbers" element={<MyNumbers />} />
+            <Route path="/dashboard/esims" element={<MyESIMs />} />
+            {/* <Route path="/dashboard/buy-esim" element={<BuyESIM />} /> */}
+            <Route path="/dashboard/transactions" element={<Transactions />} />
+            <Route path="/dashboard/api" element={<APIAccess />} />
+            <Route path="/dashboard/settings" element={<Settings />} />
+
+            {/* Static Pages */}
+            <Route path="/about" element={<NotFound />} />
+            <Route path="/contact" element={<NotFound />} />
+            <Route path="/faq" element={<NotFound />} />
+            <Route path="/api-docs" element={<NotFound />} />
+            <Route path="/affiliate" element={<NotFound />} />
+            <Route path="/privacy" element={<NotFound />} />
+            <Route path="/terms" element={<NotFound />} />
+            <Route path="/status" element={<NotFound />} />
+
+            {/* Catch-all */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
