@@ -5,6 +5,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import DashboardLayout from "@/components/layout/DashboardLayout"
+import LoginModal from "@/components/auth/LoginModal"
+import AddFundsModal from "@/components/wallet/AddFundsModal"
+import { getUserBalance } from "@/lib/paystack"
+import { getCurrentUser, logoutUser } from "@/lib/auth"
 import { 
   Wallet, 
   Plus, 
@@ -19,23 +23,59 @@ import {
 
 const Dashboard = () => {
   const [balance, setBalance] = useState<number>(0)
+  const [isLoadingBalance, setIsLoadingBalance] = useState(true)
+  const [user, setUser] = useState(getCurrentUser())
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(!user)
+  const [isAddFundsModalOpen, setIsAddFundsModalOpen] = useState(false)
 
   useEffect(() => {
     const fetchBalance = async () => {
+      if (!user?.email) {
+        console.log('No user found, skipping balance fetch');
+        setIsLoadingBalance(false);
+        return;
+      }
+
       try {
-        const res = await fetch("/api/tiger-sms?api_key=BJ93bFKepOfAjB5cELEDaKfDJyE5p9C1&action=getBalance")
-        const text = await res.text()
-        // The API returns something like: ACCESS_BALANCE:45.67
-        const match = text.match(/ACCESS_BALANCE:(\d+(\.\d+)?)/)
-        if (match) {
-          setBalance(parseFloat(match[1]))
-        }
-      } catch (e) {
-        // Optionally handle error, but keep UI unaffected
+        setIsLoadingBalance(true);
+        const userBalance = await getUserBalance();
+        setBalance(userBalance);
+        console.log('✅ Balance fetched:', userBalance);
+      } catch (error) {
+        console.error('❌ Error fetching balance:', error);
+        // Keep balance at 0 if error occurs
+      } finally {
+        setIsLoadingBalance(false);
       }
     }
+    
     fetchBalance()
-  }, [])
+  }, [user?.email])
+
+  const handleLogin = (userData: { email: string }) => {
+    setUser(userData)
+    setIsLoginModalOpen(false)
+  }
+
+  const handleLogout = () => {
+    logoutUser()
+    setUser(null)
+    setBalance(0)
+    setIsLoginModalOpen(true)
+  }
+
+  const handleAddFundsSuccess = async () => {
+    setIsAddFundsModalOpen(false)
+    // Refresh balance after successful payment
+    if (user?.email) {
+      try {
+        const userBalance = await getUserBalance()
+        setBalance(userBalance)
+      } catch (error) {
+        console.error('Error refreshing balance:', error)
+      }
+    }
+  }
 
   const recentMessages = [
     {
@@ -101,7 +141,7 @@ const Dashboard = () => {
   const stats = [
     {
       title: "Wallet Balance",
-      value: `$${balance.toFixed(2)}`,
+      value: isLoadingBalance ? "Loading..." : `$${balance.toFixed(2)}`,
       icon: Wallet,
       color: "text-success"
     },
@@ -132,14 +172,23 @@ const Dashboard = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-space font-bold">Dashboard</h1>
-            <p className="text-muted-foreground">Welcome back! Here's your account overview.</p>
+            <p className="text-muted-foreground">
+              {user ? `Welcome back, ${user.email}!` : "Welcome back!"} Here's your account overview.
+            </p>
           </div>
-          <Button variant="hero" asChild>
-            <Link to="/pricing">
-              <Plus className="h-4 w-4 mr-2" />
-              Buy Number
-            </Link>
-          </Button>
+          <div className="flex items-center gap-3">
+            {user && (
+              <Button variant="glass" size="sm" onClick={handleLogout}>
+                Logout
+              </Button>
+            )}
+            <Button variant="hero" asChild>
+              <Link to="/pricing">
+                <Plus className="h-4 w-4 mr-2" />
+                Buy Number
+              </Link>
+            </Button>
+          </div>
         </div>
 
         {/* Stats Grid */}
@@ -173,13 +222,20 @@ const Dashboard = () => {
                 </CardTitle>
                 <CardDescription>Manage your account balance</CardDescription>
               </div>
-              <Button variant="neon" size="sm">
+              <Button 
+                variant="neon" 
+                size="sm"
+                onClick={() => setIsAddFundsModalOpen(true)}
+                disabled={!user}
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Add Funds
               </Button>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold mb-2 text-success">${balance.toFixed(2)}</div>
+              <div className="text-3xl font-bold mb-2 text-success">
+                {isLoadingBalance ? "Loading..." : `$${balance.toFixed(2)}`}
+              </div>
               <p className="text-muted-foreground text-sm mb-4">Available Balance</p>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
@@ -344,6 +400,20 @@ const Dashboard = () => {
           </Card>
         </div>
       </div>
+
+      {/* Login Modal */}
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => {}}
+        onLogin={handleLogin}
+      />
+
+      {/* Add Funds Modal */}
+      <AddFundsModal
+        isOpen={isAddFundsModalOpen}
+        onClose={() => setIsAddFundsModalOpen(false)}
+        onSuccess={handleAddFundsSuccess}
+      />
     </DashboardLayout>
   )
 }

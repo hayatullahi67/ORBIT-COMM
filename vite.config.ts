@@ -4,6 +4,7 @@ import path from "path";
 import { loadEnv } from 'vite';
 import { componentTagger } from "lovable-tagger";
 import { esimApiMiddleware } from "./src/middleware/esim-api.js";
+import { paystackApiMiddleware } from "./src/middleware/paystack-api.js";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -22,6 +23,7 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     esimApiMiddleware(),
+    paystackApiMiddleware(),
     mode === 'development' &&
     componentTagger(),
   ].filter(Boolean),
