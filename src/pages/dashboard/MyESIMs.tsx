@@ -77,72 +77,72 @@ const MyESIMs = () => {
 
   // NOTE: This is fallback mock data. The API response structure from esimcard.com may differ.
   // You will need to adjust the data mapping once you integrate the live API.
-  const mockEsims = [
-    {
-      id: 1,
-      name: "Europe 30-Day",
-      plan: "Premium Europe",
-      country: "Multi-Country",
-      region: "Europe",
-      dataTotal: "10GB",
-      dataUsed: "3.2GB",
-      dataRemaining: "6.8GB",
-      status: "Active",
-      expires: "2024-11-15",
-      activated: "2024-10-16",
-      speed: "5G",
-      countries: ["France", "Germany", "Italy", "Spain", "Netherlands"],
-      price: "$29.99"
-    },
-    {
-      id: 2,
-      name: "Global Traveler",
-      plan: "Worldwide Basic",
-      country: "Global",
-      region: "Worldwide",
-      dataTotal: "5GB",
-      dataUsed: "4.8GB",
-      dataRemaining: "0.2GB",
-      status: "Expiring",
-      expires: "2024-10-03",
-      activated: "2024-09-03",
-      speed: "4G",
-      countries: ["150+ Countries"],
-      price: "$19.99"
-    },
-    {
-      id: 3,
-      name: "Asia Pacific",
-      plan: "Business Asia",
-      country: "Multi-Country",
-      region: "Asia Pacific",
-      dataTotal: "20GB",
-      dataUsed: "0GB",
-      dataRemaining: "20GB",
-      status: "Inactive",
-      expires: "2024-12-01",
-      activated: null,
-      speed: "5G",
-      countries: ["Japan", "South Korea", "Singapore", "Australia"],
-      price: "$49.99"
-    },
-    {
-      id: 4,
-      name: "USA Unlimited",
-      plan: "Premium USA",
-      country: "United States",
-      region: "North America",
-      dataTotal: "Unlimited",
-      dataUsed: "45GB",
-      dataRemaining: "Unlimited",
-      status: "Active",
-      expires: "2024-11-30",
-      activated: "2024-09-01",
-      speed: "5G",
-      countries: ["United States"],
-      price: "$39.99"
-    }
-  ]
+  // const mockEsims = [
+  //   {
+  //     id: 1,
+  //     name: "Europe 30-Day",
+  //     plan: "Premium Europe",
+  //     country: "Multi-Country",
+  //     region: "Europe",
+  //     dataTotal: "10GB",
+  //     dataUsed: "3.2GB",
+  //     dataRemaining: "6.8GB",
+  //     status: "Active",
+  //     expires: "2024-11-15",
+  //     activated: "2024-10-16",
+  //     speed: "5G",
+  //     countries: ["France", "Germany", "Italy", "Spain", "Netherlands"],
+  //     price: "$29.99"
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Global Traveler",
+  //     plan: "Worldwide Basic",
+  //     country: "Global",
+  //     region: "Worldwide",
+  //     dataTotal: "5GB",
+  //     dataUsed: "4.8GB",
+  //     dataRemaining: "0.2GB",
+  //     status: "Expiring",
+  //     expires: "2024-10-03",
+  //     activated: "2024-09-03",
+  //     speed: "4G",
+  //     countries: ["150+ Countries"],
+  //     price: "$19.99"
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "Asia Pacific",
+  //     plan: "Business Asia",
+  //     country: "Multi-Country",
+  //     region: "Asia Pacific",
+  //     dataTotal: "20GB",
+  //     dataUsed: "0GB",
+  //     dataRemaining: "20GB",
+  //     status: "Inactive",
+  //     expires: "2024-12-01",
+  //     activated: null,
+  //     speed: "5G",
+  //     countries: ["Japan", "South Korea", "Singapore", "Australia"],
+  //     price: "$49.99"
+  //   },
+  //   {
+  //     id: 4,
+  //     name: "USA Unlimited",
+  //     plan: "Premium USA",
+  //     country: "United States",
+  //     region: "North America",
+  //     dataTotal: "Unlimited",
+  //     dataUsed: "45GB",
+  //     dataRemaining: "Unlimited",
+  //     status: "Active",
+  //     expires: "2024-11-30",
+  //     activated: "2024-09-01",
+  //     speed: "5G",
+  //     countries: ["United States"],
+  //     price: "$39.99"
+  //   }
+  // ]
 
   // The API response for my-esims is likely nested, e.g., `data.esims`.
   // This mapping needs to be adjusted based on the actual API response structure.
@@ -154,7 +154,7 @@ const MyESIMs = () => {
     },
     select: (data: any) => {
       console.log('🔄 REACT QUERY: Selecting eSIMs data:', data);
-      return data?.esims || mockEsims;
+      return data?.esims;
     },
     refetchOnWindowFocus: false
   });
@@ -317,7 +317,8 @@ const MyESIMs = () => {
 
   // Combine stored eSIMs with API eSIMs (if any), prioritizing stored eSIMs
   const displayEsims = useMemo(() => {
-    const apiEsims = error ? mockEsims : (esims || []);
+    // Only use API eSIMs if there's no error, otherwise use empty array
+    const apiEsims = error ? [] : (esims || []);
 
     // If we have stored eSIMs, combine them with API eSIMs
     if (storedEsims.length > 0) {
@@ -340,10 +341,10 @@ const MyESIMs = () => {
       return combinedEsims;
     }
 
-    // If no stored eSIMs, use API or mock data
-    console.log('📱 DISPLAY: Using API/mock eSIMs:', apiEsims.length);
+    // If no stored eSIMs, use API data (or empty array if error)
+    console.log('📱 DISPLAY: Using API eSIMs:', apiEsims.length);
     return apiEsims;
-  }, [storedEsims, esims, error, mockEsims]);
+  }, [storedEsims, esims, error]);
 
   const filteredESIMs = (displayEsims).filter((esim: any) =>
     esim.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -608,9 +609,11 @@ const MyESIMs = () => {
               <p className="text-muted-foreground mb-4">
                 {searchTerm
                   ? "Try adjusting your search terms"
-                  : storedEsims.length === 0
-                    ? "Get your first eSIM plan to stay connected globally"
-                    : "All your eSIMs are filtered out by the current search"
+                  : storedEsims.length === 0 && !error
+                    ? "No eSIMs purchased at the moment. Get your first eSIM plan to stay connected globally"
+                    : error
+                      ? "Unable to load eSIMs from server. Any purchased eSIMs will appear here once the connection is restored."
+                      : "All your eSIMs are filtered out by the current search"
                 }
               </p>
               <Button variant="hero" onClick={() => setIsBuyModalOpen(true)}>
