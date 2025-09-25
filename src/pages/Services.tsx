@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
+import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import Navbar from "@/components/layout/Navbar"
 import Footer from "@/components/layout/Footer"
+import { useTigerSmsPrices } from "@/hooks/useTigerSmsPrices"
 import { 
   Search, 
   Smartphone, 
@@ -18,38 +20,104 @@ import {
   Zap,
   TrendingUp,
   Users,
-  Shield
+  Shield,
+  Send,
+  Phone,
+  Linkedin
 } from "lucide-react"
 import { FaWhatsapp, FaTelegramPlane, FaTwitter, FaInstagram, FaFacebook, FaDiscord, FaGoogle, FaAmazon } from "react-icons/fa"
 
 const Services = () => {
+  const navigate = useNavigate()
   const [selectedService, setSelectedService] = useState("")
   const [selectedCountry, setSelectedCountry] = useState("")
   const [searchQuery, setSearchQuery] = useState("")
   const [hoveredService, setHoveredService] = useState("")
   const [hoveredCountry, setHoveredCountry] = useState("")
 
-  const services = [
-    { id: "whatsapp", name: "WhatsApp", icon: <FaWhatsapp className="text-green-500 m-[auto]" />, price: "$0.25", popular: true },
-    { id: "telegram", name: "Telegram", icon: <FaTelegramPlane className="text-blue-400 m-[auto]" />, price: "$0.20", popular: true },
-    { id: "twitter", name: "Twitter", icon: <FaTwitter className="text-blue-500 m-[auto]" />, price: "$0.30", popular: true },
-    { id: "instagram", name: "Instagram", icon: <FaInstagram className="text-pink-500 m-[auto]" />, price: "$0.35", popular: false },
-    { id: "facebook", name: "Facebook", icon: <FaFacebook className="text-blue-700 m-[auto]" />, price: "$0.40", popular: false },
-    { id: "discord", name: "Discord", icon: <FaDiscord className="text-indigo-500 m-[auto]" />, price: "$0.25", popular: false },
-    { id: "google", name: "Google", icon: <FaGoogle className="text-red-500 m-[auto]" />, price: "$0.30", popular: true },
-    { id: "amazon", name: "Amazon", icon: <FaAmazon className="text-yellow-600 m-[auto]" />, price: "$0.45", popular: false },
-  ]
+  // Fetch live pricing data
+  const { prices, loading: pricesLoading, error: pricesError } = useTigerSmsPrices();
 
-  const countries = [
-    { id: "us", name: "United States", flag: "🇺🇸", price: "$0.25", numbers: "78,866", popular: true },
-    { id: "uk", name: "United Kingdom", flag: "🇬🇧", price: "$0.30", numbers: "205,705", popular: true },
-    { id: "ca", name: "Canada", flag: "🇨🇦", price: "$0.20", numbers: "52,171", popular: false },
-    { id: "de", name: "Germany", flag: "🇩🇪", price: "$0.35", numbers: "45,123", popular: false },
-    { id: "fr", name: "France", flag: "🇫🇷", price: "$0.28", numbers: "38,945", popular: false },
-    { id: "au", name: "Australia", flag: "🇦🇺", price: "$0.32", numbers: "29,876", popular: false },
-    { id: "jp", name: "Japan", flag: "🇯🇵", price: "$0.40", numbers: "25,432", popular: false },
-    { id: "in", name: "India", flag: "🇮🇳", price: "$0.15", numbers: "125,678", popular: true },
-  ]
+  // Country and service mappings from MyNumbers.tsx
+  const countryNames: Record<string, string> = {
+    '74': 'Afghanistan', '155': 'Albania', '58': 'Algeria', '76': 'Angola', '181': 'Anguilla', '169': 'Antigua and Barbuda', '39': 'Argentina', '148': 'Armenia', '179': 'Aruba', '175': 'Australia', '50': 'Austria', '35': 'Azerbaijan', '122': 'Bahamas', '145': 'Bahrain', '60': 'Bangladesh', '118': 'Barbados', '51': 'Belarus', '82': 'Belgium', '124': 'Belize', '120': 'Benin', '195': 'Bermuda', '158': 'Bhutan', '92': 'Bolivia', '108': 'Bosnia and Herzegovina', '123': 'Botswana', '73': 'Brazil', '121': 'Brunei Darussalam', '83': 'Bulgaria', '152': 'Burkina Faso', '119': 'Burundi', '24': 'Cambodia', '41': 'Cameroon', '36': 'Canada', '186': 'Cape Verde', '170': 'Cayman Islands', '125': 'Central African Republic', '42': 'Chad', '151': 'Chile', '3': 'China', '33': 'Colombia', '133': 'Comoros', '150': 'Congo (Dem. Republic)', '18': 'Congo', '93': 'Costa Rica', '27': "Côte d'Ivoire", '45': 'Croatia', '113': 'Cuba', '77': 'Cyprus', '63': 'Czech Republic', '172': 'Denmark', '168': 'Djibouti', '126': 'Dominica', '109': 'Dominican Republic', '105': 'Ecuador', '21': 'Egypt', '101': 'El Salvador', '167': 'Equatorial Guinea', '176': 'Eritrea', '34': 'Estonia', '71': 'Ethiopia', '189': 'Fiji', '163': 'Finland', '78': 'France', '162': 'French Guiana', '154': 'Gabon', '28': 'Gambia', '128': 'Georgia', '43': 'Germany', '38': 'Ghana', '201': 'Gibraltar', '129': 'Greece', '127': 'Grenada', '160': 'Guadeloupe', '94': 'Guatemala', '68': 'Guinea', '130': 'Guinea-Bissau', '131': 'Guyana', '26': 'Haiti', '88': 'Honduras', '14': 'Hong Kong', '84': 'Hungary', '132': 'Iceland', '22': 'India', '6': 'Indonesia', '57': 'Iran', '47': 'Iraq', '23': 'Ireland', '13': 'Israel', '86': 'Italy', '103': 'Jamaica', '182': 'Japan', '116': 'Jordan', '2': 'Kazakhstan', '8': 'Kenya', '190': 'Korea', '203': 'Kosovo', '100': 'Kuwait', '11': 'Kyrgyzstan', '25': 'Laos', '49': 'Latvia', '153': 'Lebanon', '136': 'Lesotho', '135': 'Liberia', '102': 'Libya', '44': 'Lithuania', '165': 'Luxembourg', '20': 'Macau', '183': 'North Macedonia', '17': 'Madagascar', '137': 'Malawi', '7': 'Malaysia', '159': 'Maldives', '69': 'Mali', '199': 'Malta', '114': 'Mauritania', '157': 'Mauritius', '54': 'Mexico', '85': 'Moldova', '144': 'Monaco', '72': 'Mongolia', '171': 'Montenegro', '180': 'Montserrat', '37': 'Morocco', '80': 'Mozambique', '5': 'Myanmar', '138': 'Namibia', '81': 'Nepal', '48': 'Netherlands', '185': 'New Caledonia', '67': 'New Zealand', '90': 'Nicaragua', '139': 'Niger', '19': 'Nigeria', '174': 'Norway', '107': 'Oman', '66': 'Pakistan', '188': 'Palestine', '112': 'Panama', '79': 'Papua New Guinea', '87': 'Paraguay', '65': 'Peru', '4': 'Philippines', '15': 'Poland', '117': 'Portugal', '97': 'Puerto Rico', '111': 'Qatar', '146': 'Reunion', '32': 'Romania', '140': 'Rwanda', '134': 'Saint Kitts and Nevis', '164': 'Saint Lucia', '166': 'Saint Vincent and the Grenadines', '198': 'Samoa', '178': 'Sao Tome and Principe', '53': 'Saudi Arabia', '61': 'Senegal', '29': 'Serbia', '184': 'Seychelles', '115': 'Sierra Leone', '196': 'Singapore', '141': 'Slovakia', '59': 'Slovenia', '193': 'Solomon Islands', '149': 'Somalia', '31': 'South Africa', '177': 'South Sudan', '56': 'Spain', '64': 'Sri Lanka', '98': 'Sudan', '142': 'Suriname', '106': 'Eswatini', '46': 'Sweden', '173': 'Switzerland', '110': 'Syria', '55': 'Taiwan', '143': 'Tajikistan', '9': 'Tanzania', '52': 'Thailand', '91': 'Timor-Leste', '99': 'Togo', '197': 'Tonga', '104': 'Trinidad and Tobago', '89': 'Tunisia', '62': 'Turkey', '161': 'Turkmenistan', '75': 'Uganda', '1': 'Ukraine', '95': 'United Arab Emirates', '16': 'United Kingdom', '187': 'United States', '156': 'Uruguay', '40': 'Uzbekistan', '70': 'Venezuela', '10': 'Vietnam', '30': 'Yemen', '147': 'Zambia', '96': 'Zimbabwe'
+  };
+
+  const countryCodeToIso: Record<string, string> = { '74': 'AF', '155': 'AL', '58': 'DZ', '76': 'AO', '181': 'AI', '169': 'AG', '39': 'AR', '148': 'AM', '179': 'AW', '175': 'AU', '50': 'AT', '35': 'AZ', '122': 'BS', '145': 'BH', '60': 'BD', '118': 'BB', '51': 'BY', '82': 'BE', '124': 'BZ', '120': 'BJ', '195': 'BM', '158': 'BT', '92': 'BO', '108': 'BA', '123': 'BW', '73': 'BR', '121': 'BN', '83': 'BG', '152': 'BF', '119': 'BI', '24': 'KH', '41': 'CM', '36': 'CA', '186': 'CV', '170': 'KY', '125': 'CF', '42': 'TD', '151': 'CL', '3': 'CN', '33': 'CO', '133': 'KM', '150': 'CD', '18': 'CG', '93': 'CR', '27': 'CI', '45': 'HR', '113': 'CU', '77': 'CY', '63': 'CZ', '172': 'DK', '168': 'DJ', '126': 'DM', '109': 'DO', '105': 'EC', '21': 'EG', '101': 'SV', '167': 'GQ', '176': 'ER', '34': 'EE', '71': 'ET', '189': 'FJ', '163': 'FI', '78': 'FR', '162': 'GF', '154': 'GA', '28': 'GM', '128': 'GE', '43': 'DE', '38': 'GH', '201': 'GI', '129': 'GR', '127': 'GD', '160': 'GP', '94': 'GT', '68': 'GN', '130': 'GW', '131': 'GY', '26': 'HT', '88': 'HN', '14': 'HK', '84': 'HU', '132': 'IS', '22': 'IN', '6': 'ID', '57': 'IR', '47': 'IQ', '23': 'IE', '13': 'IL', '86': 'IT', '103': 'JM', '182': 'JP', '116': 'JO', '2': 'KZ', '8': 'KE', '190': 'KR', '203': 'XK', '100': 'KW', '11': 'KG', '25': 'LA', '49': 'LV', '153': 'LB', '136': 'LS', '135': 'LR', '102': 'LY', '44': 'LT', '165': 'LU', '20': 'MO', '183': 'MK', '17': 'MG', '137': 'MW', '7': 'MY', '159': 'MV', '69': 'ML', '199': 'MT', '114': 'MR', '157': 'MU', '54': 'MX', '85': 'MD', '144': 'MC', '72': 'MN', '171': 'ME', '180': 'MS', '37': 'MA', '80': 'MZ', '5': 'MM', '138': 'NA', '81': 'NP', '48': 'NL', '185': 'NC', '67': 'NZ', '90': 'NI', '139': 'NE', '19': 'NG', '174': 'NO', '107': 'OM', '66': 'PK', '188': 'PS', '112': 'PA', '79': 'PG', '87': 'PY', '65': 'PE', '4': 'PH', '15': 'PL', '117': 'PT', '97': 'PR', '111': 'QA', '146': 'RE', '32': 'RO', '140': 'RW', '134': 'KN', '164': 'LC', '166': 'VC', '198': 'WS', '178': 'ST', '53': 'SA', '61': 'SN', '29': 'RS', '184': 'SC', '115': 'SL', '196': 'SG', '141': 'SK', '59': 'SI', '193': 'SB', '149': 'SO', '31': 'ZA', '177': 'SS', '56': 'ES', '64': 'LK', '98': 'SD', '142': 'SR', '106': 'SZ', '46': 'SE', '173': 'CH', '110': 'SY', '55': 'TW', '143': 'TJ', '9': 'TZ', '52': 'TH', '91': 'TL', '99': 'TG', '197': 'TO', '104': 'TT', '89': 'TN', '62': 'TR', '161': 'TM', '75': 'UG', '1': 'UA', '95': 'AE', '16': 'GB', '187': 'US', '156': 'UY', '40': 'UZ', '70': 'VE', '10': 'VN', '30': 'YE', '147': 'ZM', '96': 'ZW' };
+
+  const serviceDetails: Record<string, { name: string; icon: React.ReactNode; popular?: boolean }> = {
+    wa: { name: 'WhatsApp', icon: <FaWhatsapp className="text-green-500 m-[auto]" />, popular: true },
+    tg: { name: 'Telegram', icon: <FaTelegramPlane className="text-blue-400 m-[auto]" />, popular: true },
+    ig: { name: 'Instagram', icon: <FaInstagram className="text-pink-500 m-[auto]" />, popular: false },
+    tw: { name: 'Twitter', icon: <FaTwitter className="text-blue-500 m-[auto]" />, popular: true },
+    fb: { name: 'Facebook', icon: <FaFacebook className="text-blue-700 m-[auto]" />, popular: false },
+    go: { name: 'Google', icon: <FaGoogle className="text-red-500 m-[auto]" />, popular: true },
+    am: { name: 'Amazon', icon: <FaAmazon className="text-yellow-600 m-[auto]" />, popular: false },
+    dc: { name: 'Discord', icon: <FaDiscord className="text-indigo-500 m-[auto]" />, popular: false },
+    vi: { name: 'Viber', icon: <Phone className="text-purple-500 m-[auto]" />, popular: false },
+    sg: { name: 'Signal', icon: <MessageSquare className="text-blue-600 m-[auto]" />, popular: false },
+    li: { name: 'LinkedIn', icon: <Linkedin className="text-blue-800 m-[auto]" />, popular: false },
+  };
+
+  const getFlagEmoji = (countryCode: string) => {
+    return String.fromCodePoint(...[...countryCode.toUpperCase()].map(char => 0x1F1A5 + char.charCodeAt(0)));
+  }
+
+  // Generate countries from API data
+  const countries = useMemo(() => {
+    if (!prices) return [];
+    return Object.keys(prices)
+      .map(code => {
+        const countryServices = prices[code];
+        const totalNumbers = Object.values(countryServices).reduce((sum: number, service: any) => sum + service.count, 0);
+        const minPrice = Math.min(...Object.values(countryServices).map((service: any) => service.cost));
+        const isPopular = totalNumbers > 50 || ['1', '16', '187', '22'].includes(code); // Ukraine, UK, US, India
+        
+        return {
+          id: code,
+          name: countryNames[code] || `Unknown Country (${code})`,
+          flag: getFlagEmoji(countryCodeToIso[code] || 'XX'),
+          price: `$${minPrice.toFixed(2)}`,
+          numbers: totalNumbers.toLocaleString(),
+          popular: isPopular
+        };
+      })
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }, [prices, countryNames, countryCodeToIso]);
+
+  // Generate services based on selected country
+  const services = useMemo(() => {
+    if (!selectedCountry || !prices) {
+      // Show all possible services when no country selected
+      return Object.entries(serviceDetails).map(([code, details]) => ({
+        id: code,
+        name: details.name,
+        icon: details.icon,
+        price: "$0.25", // Default price
+        popular: details.popular || false
+      }));
+    }
+
+    const countryServices = prices[selectedCountry];
+    if (!countryServices) return [];
+
+    return Object.entries(countryServices).map(([code, serviceData]) => ({
+      id: code,
+      name: serviceDetails[code]?.name || code,
+      icon: serviceDetails[code]?.icon || <Smartphone className="text-gray-500 m-[auto]" />,
+      price: `$${serviceData.cost.toFixed(2)}`,
+      popular: serviceDetails[code]?.popular || false
+    }));
+  }, [selectedCountry, prices, serviceDetails]);
+
+  // Handle service selection - navigate to login if both country and service selected
+  const handleServiceSelect = (serviceId: string) => {
+    setSelectedService(serviceId);
+    if (selectedCountry && serviceId) {
+      // Navigate to login page when both country and service are selected
+      navigate('/auth/login');
+    }
+  };
 
   const filteredServices = services.filter(service =>
     service.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -241,6 +309,7 @@ const Services = () => {
                       <Button 
                         className="w-full bg-gradient-primary hover:shadow-glow transition-all duration-300 group" 
                         size="lg"
+                        onClick={() => navigate('/auth/login')}
                       >
                         <MessageSquare className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
                         Get Number - {countries.find(c => c.id === selectedCountry)?.price}
@@ -270,7 +339,7 @@ const Services = () => {
                         className={`glass border-0 cursor-pointer transition-all duration-300 group hover:shadow-glow hover:-translate-y-1 animate-slide-up ${
                           selectedService === service.id ? 'ring-2 ring-primary shadow-glow' : ''
                         }`}
-                        onClick={() => setSelectedService(service.id)}
+                        onClick={() => handleServiceSelect(service.id)}
                         onMouseEnter={() => setHoveredService(service.id)}
                         onMouseLeave={() => setHoveredService("")}
                         style={{ animationDelay: `${index * 0.1}s` }}

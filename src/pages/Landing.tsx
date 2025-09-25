@@ -8,12 +8,12 @@ import Footer from "@/components/layout/Footer"
 import HeroGlobe from "@/components/HeroGlobe"
 import CreativeFilter from "@/components/CreativeFilter"
 import CreativeHowItWorks from "@/components/CreativeHowItWorks"
-import { 
-  Smartphone, 
-  MessageSquare, 
-  Globe, 
-  Shield, 
-  Zap, 
+import {
+  Smartphone,
+  MessageSquare,
+  Globe,
+  Shield,
+  Zap,
   CheckCircle,
   ArrowRight,
   Users,
@@ -59,7 +59,7 @@ const Landing = () => {
       description: "Select your desired service and country from our extensive global network."
     },
     {
-      step: "02", 
+      step: "02",
       title: "Get Number/eSIM",
       description: "Receive your virtual number or eSIM activation instantly in your dashboard."
     },
@@ -112,7 +112,7 @@ const Landing = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       {/* Enhanced Hero Section */}
       <section className="pt-16 sm:pt-20 pb-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden mt-10">
         {/* Animated Background */}
@@ -131,7 +131,7 @@ const Landing = () => {
                 <Rocket className="h-3 w-3 mr-1" />
                 Revolutionary Communication Platform
               </Badge>
-              
+
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-manrope font-bold mb-6 animate-slide-up leading-tight">
                 <span className="bg-gradient-primary bg-clip-text text-transparent">
                   247Sim.net
@@ -141,12 +141,12 @@ const Landing = () => {
                   Virtual Numbers for Receiving SMS
                 </span>
               </h1>
-              
+
               <p className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-2xl animate-slide-up animate-delay-1">
-                For buy virtual mobile number for sms verification you do not need to enter any personal data. 
+                For buy virtual mobile number for sms verification you do not need to enter any personal data.
                 <span className="text-primary font-semibold">It is enough to register by e-mail.</span>
               </p>
-              
+
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8 animate-slide-up animate-delay-2">
                 <Button variant="hero" size="lg" className="group animate-pulse-glow" asChild>
                   <Link to="/services">
@@ -203,7 +203,7 @@ const Landing = () => {
             Over <span className="text-primary">500,000</span> Numbers from <span className="text-primary">180+</span> Countries
           </h2>
           <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Access virtual numbers from around the world for instant SMS verification. 
+            Access virtual numbers from around the world for instant SMS verification.
             No personal data required - just register with your email.
           </p>
           <Button variant="hero" size="lg" asChild>
@@ -229,7 +229,7 @@ const Landing = () => {
             {features.map((feature, index) => {
               const Icon = feature.icon
               return (
-                <Card key={feature.title} className="glass hover:shadow-glow transition-all duration-300 group animate-slide-up border-0" style={{animationDelay: `${index * 0.1}s`}}>
+                <Card key={feature.title} className="glass hover:shadow-glow transition-all duration-300 group animate-slide-up border-0" style={{ animationDelay: `${index * 0.1}s` }}>
                   <CardHeader className="pb-3">
                     <Icon className={`h-6 w-6 ${feature.color} group-hover:scale-110 transition-transform`} />
                     <CardTitle className="text-base">{feature.title}</CardTitle>
@@ -261,9 +261,9 @@ const Landing = () => {
 
           <Accordion type="single" collapsible className="space-y-3">
             {faqs.map((faq, index) => (
-              <AccordionItem 
-                key={index} 
-                value={`item-${index}`} 
+              <AccordionItem
+                key={index}
+                value={`item-${index}`}
                 className="glass border-0 rounded-lg px-4 sm:px-6"
               >
                 <AccordionTrigger className="text-left hover:no-underline text-sm sm:text-base font-medium">
