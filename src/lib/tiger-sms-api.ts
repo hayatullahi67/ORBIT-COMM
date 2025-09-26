@@ -1,7 +1,9 @@
 // Tiger SMS API Configuration
 const TIGER_SMS_API_BASE = import.meta.env.DEV 
   ? '/api/tiger-sms' // Use proxy in development
-  : 'https://api.tiger-sms.com/stubs/handler_api.php'; // Direct API in production
+  : 'https://api.allorigins.win/get?url='; // Use AllOrigins proxy in production
+
+const TIGER_SMS_DIRECT_URL = 'https://api.tiger-sms.com/stubs/handler_api.php';
 
 export interface TigerSMSParams {
   api_key?: string;
@@ -34,13 +36,23 @@ export const callTigerSMSAPI = async (params: TigerSMSParams): Promise<string> =
     if (params.status) urlParams.append('status', params.status);
     if (params.id) urlParams.append('id', params.id);
     
-    const url = `${TIGER_SMS_API_BASE}?${urlParams.toString()}`;
+    let url: string;
+    
+    if (import.meta.env.DEV) {
+      // Development: use Vite proxy
+      url = `${TIGER_SMS_API_BASE}?${urlParams.toString()}`;
+    } else {
+      // Production: use AllOrigins proxy
+      const targetUrl = `${TIGER_SMS_DIRECT_URL}?${urlParams.toString()}`;
+      url = `${TIGER_SMS_API_BASE}${encodeURIComponent(targetUrl)}`;
+    }
+    
     console.log('🐅 TIGER SMS: Request URL:', url);
     
     const response = await fetch(url, {
       method: 'GET',
       headers: {
-        'Accept': 'text/plain',
+        'Accept': 'application/json',
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
       }
     });
@@ -49,7 +61,17 @@ export const callTigerSMSAPI = async (params: TigerSMSParams): Promise<string> =
       throw new Error(`Tiger SMS API request failed: ${response.status} - ${response.statusText}`);
     }
     
-    const text = await response.text();
+    let text: string;
+    
+    if (import.meta.env.DEV) {
+      // Development: direct response
+      text = await response.text();
+    } else {
+      // Production: extract from AllOrigins response
+      const jsonResponse = await response.json();
+      text = jsonResponse.contents;
+    }
+    
     console.log('🐅 TIGER SMS: Response:', text);
     
     return text;
