@@ -2,9 +2,7 @@
   "functions": {
     "api/tiger-sms.js": {
       "maxDuration": 30
-    },
-    "api/countries-list.js": {
-      "maxDuration": 30
     }
+    
   }
 }
