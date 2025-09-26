@@ -1,7 +1,7 @@
 // Tiger SMS API Configuration
-const TIGER_SMS_API_BASE = import.meta.env.DEV 
+const TIGER_SMS_API_BASE = import.meta.env.DEV
   ? '/api/tiger-sms' // Use proxy in development
-  : 'https://api.allorigins.win/get?url='; // Use AllOrigins proxy in production
+  : 'https://cors.sh/'; // Use cors.sh proxy in production
 
 const TIGER_SMS_DIRECT_URL = 'https://api.tiger-sms.com/stubs/handler_api.php';
 
@@ -21,63 +21,91 @@ export interface TigerSMSResponse {
   error?: string;
 }
 
+// Fallback CORS proxies in case one fails
+const CORS_PROXIES = [
+  'https://cors.sh/',
+  'https://corsproxy.io/?',
+  'https://cors-proxy.htmldriven.com/?url='
+];
+
 export const callTigerSMSAPI = async (params: TigerSMSParams): Promise<string> => {
   console.log('🐅 TIGER SMS: Making API request with params:', params);
-  
-  try {
-    // Build the URL with query parameters
-    const urlParams = new URLSearchParams();
-    
-    if (params.api_key) urlParams.append('api_key', params.api_key);
-    if (params.action) urlParams.append('action', params.action);
-    if (params.service) urlParams.append('service', params.service);
-    if (params.country) urlParams.append('country', params.country);
-    if (params.ref) urlParams.append('ref', params.ref);
-    if (params.status) urlParams.append('status', params.status);
-    if (params.id) urlParams.append('id', params.id);
-    
-    let url: string;
-    
-    if (import.meta.env.DEV) {
-      // Development: use Vite proxy
-      url = `${TIGER_SMS_API_BASE}?${urlParams.toString()}`;
-    } else {
-      // Production: use AllOrigins proxy
-      const targetUrl = `${TIGER_SMS_DIRECT_URL}?${urlParams.toString()}`;
-      url = `${TIGER_SMS_API_BASE}${encodeURIComponent(targetUrl)}`;
-    }
-    
-    console.log('🐅 TIGER SMS: Request URL:', url);
-    
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+
+  // Build the URL with query parameters
+  const urlParams = new URLSearchParams();
+
+  if (params.api_key) urlParams.append('api_key', params.api_key);
+  if (params.action) urlParams.append('action', params.action);
+  if (params.service) urlParams.append('service', params.service);
+  if (params.country) urlParams.append('country', params.country);
+  if (params.ref) urlParams.append('ref', params.ref);
+  if (params.status) urlParams.append('status', params.status);
+  if (params.id) urlParams.append('id', params.id);
+
+  if (import.meta.env.DEV) {
+    // Development: use Vite proxy
+    const url = `${TIGER_SMS_API_BASE}?${urlParams.toString()}`;
+    console.log('🐅 TIGER SMS: Request URL (DEV):', url);
+
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Accept': 'text/plain',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Tiger SMS API request failed: ${response.status} - ${response.statusText}`);
       }
-    });
-    
-    if (!response.ok) {
-      throw new Error(`Tiger SMS API request failed: ${response.status} - ${response.statusText}`);
+
+      const text = await response.text();
+      console.log('🐅 TIGER SMS: Response:', text);
+      return text;
+    } catch (error) {
+      console.error('❌ TIGER SMS: API error:', error);
+      throw error;
     }
-    
-    let text: string;
-    
-    if (import.meta.env.DEV) {
-      // Development: direct response
-      text = await response.text();
-    } else {
-      // Production: extract from AllOrigins response
-      const jsonResponse = await response.json();
-      text = jsonResponse.contents;
+  } else {
+    // Production: try multiple CORS proxies as fallback
+    const targetUrl = `${TIGER_SMS_DIRECT_URL}?${urlParams.toString()}`;
+
+    for (let i = 0; i < CORS_PROXIES.length; i++) {
+      const proxy = CORS_PROXIES[i];
+      const url = `${proxy}${encodeURIComponent(targetUrl)}`;
+
+      console.log(`🐅 TIGER SMS: Trying proxy ${i + 1}/${CORS_PROXIES.length}:`, url);
+
+      try {
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Accept': 'text/plain',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const text = await response.text();
+        console.log('🐅 TIGER SMS: Response:', text);
+        return text;
+      } catch (error) {
+        console.warn(`❌ TIGER SMS: Proxy ${i + 1} failed:`, error);
+
+        // If this is the last proxy, throw the error
+        if (i === CORS_PROXIES.length - 1) {
+          console.error('❌ TIGER SMS: All proxies failed');
+          throw new Error('All CORS proxies failed. Please try again later.');
+        }
+
+        // Otherwise, continue to next proxy
+        continue;
+      }
     }
-    
-    console.log('🐅 TIGER SMS: Response:', text);
-    
-    return text;
-  } catch (error) {
-    console.error('❌ TIGER SMS: API error:', error);
-    throw error;
   }
 };
 
