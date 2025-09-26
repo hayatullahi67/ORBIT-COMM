@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { getPrices } from '@/lib/tiger-sms-api';
 
 // Define the structure of the pricing data
 export interface ServicePrice {
@@ -14,8 +15,7 @@ export interface AllPrices {
   [countryCode: string]: CountryPrices;
 }
 
-const API_KEY = 'BJ93bFKepOfAjB5cELEDaKfDJyE5p9C1'; // The key from your prompt
-const API_URL = `/api/tiger-sms?api_key=${API_KEY}&action=getPrices`;
+const API_KEY = 'BJ93bFKepOfAjB5cELEDaKfDJyE5p9C1';
 
 export const useTigerSmsPrices = () => {
   const [prices, setPrices] = useState<AllPrices | null>(null);
@@ -25,9 +25,8 @@ export const useTigerSmsPrices = () => {
   useEffect(() => {
     const fetchPrices = async () => {
       try {
-        const response = await fetch(API_URL);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const rawData = await response.json();
+        const responseText = await getPrices(API_KEY);
+        const rawData = JSON.parse(responseText);
 
         // The API might return numbers as strings, so we parse them.
         const parsedData: AllPrices = {};

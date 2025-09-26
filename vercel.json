@@ -1,8 +1,1 @@
-{
-  "functions": {
-    "api/tiger-sms.js": {
-      "maxDuration": 30
-    }
-    
-  }
-}
+{}

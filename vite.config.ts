@@ -1,10 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
-import { loadEnv } from 'vite';
 import { componentTagger } from "lovable-tagger";
-import { esimApiMiddleware } from "./src/middleware/esim-api.js";
-import { paystackApiMiddleware } from "./src/middleware/paystack-api.js";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -12,18 +9,16 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
     proxy: {
-      "/api/tiger-sms": {
-        target: "https://api.tiger-sms.com",
+      '/api/tiger-sms': {
+        target: 'https://api.tiger-sms.com',
         changeOrigin: true,
-        rewrite: path => path.replace(/^\/api\/tiger-sms/, "/stubs/handler_api.php"),
-      },
-
-    },
+        rewrite: (path) => path.replace(/^\/api\/tiger-sms/, '/stubs/handler_api.php'),
+        secure: true,
+      }
+    }
   },
   plugins: [
     react(),
-    esimApiMiddleware(),
-    paystackApiMiddleware(),
     mode === 'development' &&
     componentTagger(),
   ].filter(Boolean),

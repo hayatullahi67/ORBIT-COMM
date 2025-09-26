@@ -48,6 +48,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useTigerSmsPrices } from "@/hooks/useTigerSmsPrices";
+import { getNumber, setStatus, getStatus } from "@/lib/tiger-sms-api";
 const MyNumbers = () => {
   const [searchTerm, setSearchTerm] = useState("");
   interface Number {
@@ -414,13 +415,7 @@ const MyNumbers = () => {
       const countryCode = selectedCountry.code;
       const ref = 'orbit-comm';
 
-      const response = await fetch(`/api/tiger-sms?api_key=${API_KEY}&action=getNumber&service=${serviceCode}&country=${countryCode}&ref=${ref}`);
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok.');
-      }
-
-      const text = await response.text();
+      const text = await getNumber(API_KEY, serviceCode, countryCode);
       const parts = text.split(':');
 
       if (parts[0] === 'ACCESS_NUMBER') {
@@ -464,8 +459,7 @@ const MyNumbers = () => {
     const API_KEY = 'BJ93bFKepOfAjB5cELEDaKfDJyE5p9C1';
     try {
       // Use your backend proxy to avoid CORS issues
-      const response = await fetch(`/api/tiger-sms?api_key=${API_KEY}&action=setStatus&status=${status}&id=${activationId}`);
-      const text = await response.text();
+      const text = await setStatus(API_KEY, activationId, status);
       return text; // e.g. ACCESS_CANCEL, ACCESS_END, NO_ACTIVATION, BAD_KEY
     } catch (error: any) {
       console.error(`Error setting status to ${status}:`, error);
@@ -477,8 +471,7 @@ const MyNumbers = () => {
   const getTigerSmsMessages = async (activationId: string): Promise<string[]> => {
     const API_KEY = 'BJ93bFKepOfAjB5cELEDaKfDJyE5p9C1';
     try {
-      const response = await fetch(`/api/tiger-sms?api_key=${API_KEY}&action=getStatus&id=${activationId}`);
-      const text = await response.text();
+      const text = await getStatus(API_KEY, activationId);
       // Example: STATUS_OK:activation_id:number:code
       // Example on wait: STATUS_WAIT_CODE
       const parts = text.split(':');
