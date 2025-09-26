@@ -111,9 +111,9 @@ const Dashboard = () => {
           </div>
           <div className="flex items-center gap-3">
             <Button variant="hero" asChild>
-              <Link to="/pricing">
+              <Link to="/dashboard/esims">
                 <Plus className="h-4 w-4 mr-2" />
-                Buy Number
+                Buy New eSIMs
               </Link>
             </Button>
           </div>
@@ -150,7 +150,7 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent className="space-y-3">
             <Button variant="glass" className="w-full justify-start" asChild>
-              <Link to="/pricing">
+              <Link to="/dashboard/numbers">
                 <Smartphone className="h-4 w-4 mr-2" />
                 Rent Virtual Number
               </Link>
