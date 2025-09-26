@@ -3,34 +3,7 @@
     "api/tiger-sms.js": {
       "maxDuration": 30
     },
-    "api/paystack/balance.js": {
-      "maxDuration": 30
-    },
-    "api/esim-auth.js": {
-      "maxDuration": 30
-    },
-    "api/esim-countries.js": {
-      "maxDuration": 30
-    },
-    "api/esim-packages.js": {
-      "maxDuration": 30
-    },
-    "api/esim-package-details.js": {
-      "maxDuration": 30
-    },
-    "api/esim-purchase.js": {
-      "maxDuration": 30
-    },
-    "api/esim-purchase-status.js": {
-      "maxDuration": 30
-    },
-    "api/esim-user-esims.js": {
-      "maxDuration": 30
-    },
-    "api/esim-webhook.js": {
-      "maxDuration": 30
-    },
-    "api/test.js": {
+    "api/countries-list.js": {
       "maxDuration": 30
     }
   }
