@@ -1,19 +1,13 @@
-import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import DashboardLayout from "@/components/layout/DashboardLayout"
-import LoginModal from "@/components/auth/LoginModal"
-import AddFundsModal from "@/components/wallet/AddFundsModal"
-import { getUserBalance } from "@/lib/paystack"
-import { getCurrentUser, logoutUser } from "@/lib/auth"
-import { 
-  Wallet, 
-  Plus, 
-  MessageSquare, 
-  Smartphone, 
+import {
+  Plus,
+  MessageSquare,
+  Smartphone,
   Globe,
   TrendingUp,
   Clock,
@@ -22,61 +16,6 @@ import {
 } from "lucide-react"
 
 const Dashboard = () => {
-  const [balance, setBalance] = useState<number>(0)
-  const [isLoadingBalance, setIsLoadingBalance] = useState(true)
-  const [user, setUser] = useState(getCurrentUser())
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(!user)
-  const [isAddFundsModalOpen, setIsAddFundsModalOpen] = useState(false)
-
-  useEffect(() => {
-    const fetchBalance = async () => {
-      if (!user?.email) {
-        console.log('No user found, skipping balance fetch');
-        setIsLoadingBalance(false);
-        return;
-      }
-
-      try {
-        setIsLoadingBalance(true);
-        const userBalance = await getUserBalance();
-        setBalance(userBalance);
-        console.log('✅ Balance fetched:', userBalance);
-      } catch (error) {
-        console.error('❌ Error fetching balance:', error);
-        // Keep balance at 0 if error occurs
-      } finally {
-        setIsLoadingBalance(false);
-      }
-    }
-    
-    fetchBalance()
-  }, [user?.email])
-
-  const handleLogin = (userData: { email: string }) => {
-    setUser(userData)
-    setIsLoginModalOpen(false)
-  }
-
-  const handleLogout = () => {
-    logoutUser()
-    setUser(null)
-    setBalance(0)
-    setIsLoginModalOpen(true)
-  }
-
-  const handleAddFundsSuccess = async () => {
-    setIsAddFundsModalOpen(false)
-    // Refresh balance after successful payment
-    if (user?.email) {
-      try {
-        const userBalance = await getUserBalance()
-        setBalance(userBalance)
-      } catch (error) {
-        console.error('Error refreshing balance:', error)
-      }
-    }
-  }
-
   const recentMessages = [
     {
       id: 1,
@@ -115,7 +54,7 @@ const Dashboard = () => {
     {
       id: 2,
       number: "+44 7700 900456",
-      country: "United Kingdom", 
+      country: "United Kingdom",
       expires: "in 12 days",
       status: "active"
     }
@@ -139,12 +78,6 @@ const Dashboard = () => {
   ]
 
   const stats = [
-    {
-      title: "Wallet Balance",
-      value: isLoadingBalance ? "Loading..." : `$${balance.toFixed(2)}`,
-      icon: Wallet,
-      color: "text-success"
-    },
     {
       title: "Messages Today",
       value: "12",
@@ -173,15 +106,10 @@ const Dashboard = () => {
           <div>
             <h1 className="text-3xl font-space font-bold">Dashboard</h1>
             <p className="text-muted-foreground">
-              {user ? `Welcome back, ${user.email}!` : "Welcome back!"} Here's your account overview.
+              Welcome back! Here's your account overview.
             </p>
           </div>
           <div className="flex items-center gap-3">
-            {user && (
-              <Button variant="glass" size="sm" onClick={handleLogout}>
-                Logout
-              </Button>
-            )}
             <Button variant="hero" asChild>
               <Link to="/pricing">
                 <Plus className="h-4 w-4 mr-2" />
@@ -192,7 +120,7 @@ const Dashboard = () => {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {stats.map((stat) => {
             const Icon = stat.icon
             return (
@@ -211,76 +139,36 @@ const Dashboard = () => {
           })}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Wallet Section */}
-          <Card className="glass">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle className="flex items-center gap-2">
-                  <Wallet className="h-5 w-5 text-success" />
-                  Wallet
-                </CardTitle>
-                <CardDescription>Manage your account balance</CardDescription>
-              </div>
-              <Button 
-                variant="neon" 
-                size="sm"
-                onClick={() => setIsAddFundsModalOpen(true)}
-                disabled={!user}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Add Funds
-              </Button>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold mb-2 text-success">
-                {isLoadingBalance ? "Loading..." : `$${balance.toFixed(2)}`}
-              </div>
-              <p className="text-muted-foreground text-sm mb-4">Available Balance</p>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span>Last deposit</span>
-                  <span className="text-success">+$50.00</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>This month usage</span>
-                  <span>$24.33</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Quick Actions */}
-          <Card className="glass">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-primary" />
-                Quick Actions
-              </CardTitle>
-              <CardDescription>Get started quickly</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Button variant="glass" className="w-full justify-start" asChild>
-                <Link to="/pricing">
-                  <Smartphone className="h-4 w-4 mr-2" />
-                  Rent Virtual Number
-                </Link>
-              </Button>
-              <Button variant="glass" className="w-full justify-start" asChild>
-                <Link to="/pricing">
-                  <MessageSquare className="h-4 w-4 mr-2" />
-                  SMS Verification
-                </Link>
-              </Button>
-              <Button variant="glass" className="w-full justify-start" asChild>
-                <Link to="/pricing">
-                  <Globe className="h-4 w-4 mr-2" />
-                  Buy eSIM Plan
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
+        {/* Quick Actions */}
+        <Card className="glass">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-primary" />
+              Quick Actions
+            </CardTitle>
+            <CardDescription>Get started quickly</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Button variant="glass" className="w-full justify-start" asChild>
+              <Link to="/pricing">
+                <Smartphone className="h-4 w-4 mr-2" />
+                Rent Virtual Number
+              </Link>
+            </Button>
+            <Button variant="glass" className="w-full justify-start" asChild>
+              <Link to="/pricing">
+                <MessageSquare className="h-4 w-4 mr-2" />
+                SMS Verification
+              </Link>
+            </Button>
+            <Button variant="glass" className="w-full justify-start" asChild>
+              <Link to="/dashboard/esims">
+                <Globe className="h-4 w-4 mr-2" />
+                Buy eSIM Plan
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
 
         {/* Recent SMS Messages */}
         <Card className="glass">
@@ -400,20 +288,6 @@ const Dashboard = () => {
           </Card>
         </div>
       </div>
-
-      {/* Login Modal */}
-      <LoginModal
-        isOpen={isLoginModalOpen}
-        onClose={() => {}}
-        onLogin={handleLogin}
-      />
-
-      {/* Add Funds Modal */}
-      <AddFundsModal
-        isOpen={isAddFundsModalOpen}
-        onClose={() => setIsAddFundsModalOpen(false)}
-        onSuccess={handleAddFundsSuccess}
-      />
     </DashboardLayout>
   )
 }

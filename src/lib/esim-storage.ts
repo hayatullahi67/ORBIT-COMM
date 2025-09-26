@@ -37,7 +37,7 @@ export const getStoredEsims = (): StoredEsim[] => {
   try {
     const stored = localStorage.getItem(ESIMS_STORAGE_KEY);
     if (!stored) return [];
-    
+
     const esims = JSON.parse(stored);
     console.log('📱 STORAGE: Retrieved eSIMs from localStorage:', esims);
     return Array.isArray(esims) ? esims : [];
@@ -50,10 +50,10 @@ export const getStoredEsims = (): StoredEsim[] => {
 export const saveEsimToStorage = (esim: StoredEsim): void => {
   try {
     const existingEsims = getStoredEsims();
-    
+
     // Check if eSIM already exists (by ID)
     const existingIndex = existingEsims.findIndex(e => e.id === esim.id);
-    
+
     if (existingIndex >= 0) {
       // Update existing eSIM
       existingEsims[existingIndex] = esim;
@@ -63,7 +63,7 @@ export const saveEsimToStorage = (esim: StoredEsim): void => {
       existingEsims.push(esim);
       console.log('📱 STORAGE: Added new eSIM:', esim.id);
     }
-    
+
     localStorage.setItem(ESIMS_STORAGE_KEY, JSON.stringify(existingEsims));
     console.log('📱 STORAGE: Saved eSIMs to localStorage. Total count:', existingEsims.length);
   } catch (error) {
@@ -75,7 +75,7 @@ export const removeEsimFromStorage = (esimId: string): void => {
   try {
     const existingEsims = getStoredEsims();
     const filteredEsims = existingEsims.filter(e => e.id !== esimId);
-    
+
     localStorage.setItem(ESIMS_STORAGE_KEY, JSON.stringify(filteredEsims));
     console.log('📱 STORAGE: Removed eSIM from localStorage:', esimId);
   } catch (error) {
@@ -102,13 +102,13 @@ export const convertPurchaseToStoredEsim = (
   const data = purchaseResponse.data;
   const sim = data.sim;
   const packageInfo = data.package || data;
-  
+
   // 🔍 LOG ESIM ACTIVATION FIELDS
   console.log('📱 ESIM ACTIVATION FIELDS - Full Purchase Response:', purchaseResponse);
   console.log('📱 ESIM ACTIVATION FIELDS - Data Object:', data);
   console.log('📱 ESIM ACTIVATION FIELDS - Sim Object:', sim);
   console.log('📱 ESIM ACTIVATION FIELDS - Package Info:', packageInfo);
-  
+
   // Log specific activation fields
   console.log('🔑 ICCID (from sim):', sim?.iccid);
   console.log('🔑 ICCID (from data):', data?.iccid);
@@ -124,11 +124,11 @@ export const convertPurchaseToStoredEsim = (
   console.log('📞 PHONE_NUMBER (from data):', data?.number);
   console.log('🌍 APN (from sim):', sim?.apn);
   console.log('🌍 APN (from data):', data?.apn);
-  
+
   // Calculate expiry date
   const expiryDate = packageInfo.date_expiry || packageInfo.date_expiry;
   const activatedDate = packageInfo.date_activated || packageInfo.date_activated || packageInfo.date_created;
-  
+
   // Determine status based on purchase response
   let status = 'Active';
   if (packageInfo.status === 'Initiated' || packageInfo.status === 'Pre-Service') {
@@ -136,12 +136,12 @@ export const convertPurchaseToStoredEsim = (
   } else if (packageInfo.status === 'Revoked') {
     status = 'Expired';
   }
-  
+
   // Calculate data usage (initially 0 for new purchases)
   const dataTotal = `${packageInfo.initial_data_quantity || packageDetails.data_quantity}${packageInfo.initial_data_unit || packageDetails.data_unit}`;
   const dataUsed = '0GB';
   const dataRemaining = dataTotal;
-  
+
   return {
     id: packageInfo.id || sim?.id || `esim_${Date.now()}`,
     name: packageDetails.name || packageInfo.package || sim?.last_bundle || 'eSIM Package',
@@ -171,7 +171,7 @@ export const convertPurchaseToStoredEsim = (
     purchaseDate: new Date().toISOString(),
     purchaseData: purchaseResponse
   };
-  
+
   const storedEsim = {
     id: packageInfo.id || sim?.id || `esim_${Date.now()}`,
     name: packageDetails.name || packageInfo.package || sim?.last_bundle || 'eSIM Package',
@@ -201,7 +201,7 @@ export const convertPurchaseToStoredEsim = (
     purchaseDate: new Date().toISOString(),
     purchaseData: purchaseResponse
   };
-  
+
   // 📋 LOG FINAL STORED ESIM DATA
   console.log('💾 FINAL STORED ESIM DATA:', {
     id: storedEsim.id,
@@ -213,6 +213,6 @@ export const convertPurchaseToStoredEsim = (
     phoneNumber: storedEsim.phoneNumber,
     apn: storedEsim.apn
   });
-  
+
   return storedEsim;
 };

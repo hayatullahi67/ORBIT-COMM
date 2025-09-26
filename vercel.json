@@ -29,6 +29,9 @@
     },
     "api/esim-webhook.js": {
       "maxDuration": 30
+    },
+    "api/test.js": {
+      "maxDuration": 30
     }
   }
 }

@@ -36,7 +36,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { getMyESIMs, getEsimCountries, getEsimPackages, getEsimPackageDetails, purchaseEsimPackage, EsimPackage, EsimPackageDetails, EsimPurchaseResponse } from "@/lib/esim-api"
+import { getEsimCountries, getEsimPackages, getEsimPackageDetails, purchaseEsimPackage, EsimPackage, EsimPackageDetails, EsimPurchaseResponse } from "@/lib/esim-api"
 import { getStoredEsims, saveEsimToStorage, removeEsimFromStorage, convertPurchaseToStoredEsim, StoredEsim } from "@/lib/esim-storage"
 
 const MyESIMs = () => {
@@ -75,89 +75,10 @@ const MyESIMs = () => {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  // NOTE: This is fallback mock data. The API response structure from esimcard.com may differ.
-  // You will need to adjust the data mapping once you integrate the live API.
-  // const mockEsims = [
-  //   {
-  //     id: 1,
-  //     name: "Europe 30-Day",
-  //     plan: "Premium Europe",
-  //     country: "Multi-Country",
-  //     region: "Europe",
-  //     dataTotal: "10GB",
-  //     dataUsed: "3.2GB",
-  //     dataRemaining: "6.8GB",
-  //     status: "Active",
-  //     expires: "2024-11-15",
-  //     activated: "2024-10-16",
-  //     speed: "5G",
-  //     countries: ["France", "Germany", "Italy", "Spain", "Netherlands"],
-  //     price: "$29.99"
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "Global Traveler",
-  //     plan: "Worldwide Basic",
-  //     country: "Global",
-  //     region: "Worldwide",
-  //     dataTotal: "5GB",
-  //     dataUsed: "4.8GB",
-  //     dataRemaining: "0.2GB",
-  //     status: "Expiring",
-  //     expires: "2024-10-03",
-  //     activated: "2024-09-03",
-  //     speed: "4G",
-  //     countries: ["150+ Countries"],
-  //     price: "$19.99"
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "Asia Pacific",
-  //     plan: "Business Asia",
-  //     country: "Multi-Country",
-  //     region: "Asia Pacific",
-  //     dataTotal: "20GB",
-  //     dataUsed: "0GB",
-  //     dataRemaining: "20GB",
-  //     status: "Inactive",
-  //     expires: "2024-12-01",
-  //     activated: null,
-  //     speed: "5G",
-  //     countries: ["Japan", "South Korea", "Singapore", "Australia"],
-  //     price: "$49.99"
-  //   },
-  //   {
-  //     id: 4,
-  //     name: "USA Unlimited",
-  //     plan: "Premium USA",
-  //     country: "United States",
-  //     region: "North America",
-  //     dataTotal: "Unlimited",
-  //     dataUsed: "45GB",
-  //     dataRemaining: "Unlimited",
-  //     status: "Active",
-  //     expires: "2024-11-30",
-  //     activated: "2024-09-01",
-  //     speed: "5G",
-  //     countries: ["United States"],
-  //     price: "$39.99"
-  //   }
-  // ]
-
-  // The API response for my-esims is likely nested, e.g., `data.esims`.
-  // This mapping needs to be adjusted based on the actual API response structure.
-  const { data: esims, isLoading, error } = useQuery({
-    queryKey: ['myESIMs'],
-    queryFn: () => {
-      console.log('🚀 REACT QUERY: Starting user eSIMs fetch...');
-      return getMyESIMs();
-    },
-    select: (data: any) => {
-      console.log('🔄 REACT QUERY: Selecting eSIMs data:', data);
-      return data?.esims;
-    },
-    refetchOnWindowFocus: false
-  });
+  
+  // Remove API fetching for user eSIMs - use only local storage
+  const isLoading = false;
+  const error = null;
 
   // --- Modal Data Fetching ---
   const { data: countries, isLoading: isLoadingCountries } = useQuery({
@@ -198,21 +119,21 @@ const MyESIMs = () => {
 
     return countries
       .filter((country: any) =>
-        country.iso?.name?.toLowerCase().includes(countrySearchTerm.toLowerCase())
+        country.name?.toLowerCase().includes(countrySearchTerm.toLowerCase())
       )
-      .sort((a: any, b: any) => a.iso.name.localeCompare(b.iso.name));
+      .sort((a: any, b: any) => a.name.localeCompare(b.name));
   }, [countries, countrySearchTerm]);
 
   const handleCountrySelect = (country: any) => {
     console.log('🎯 COUNTRY SELECT: Raw country data:', country);
-    console.log('🎯 COUNTRY SELECT: Country ID:', country.iso.id);
-    console.log('🎯 COUNTRY SELECT: Country name:', country.iso.name);
+    console.log('🎯 COUNTRY SELECT: Country ID:', country.id);
+    console.log('🎯 COUNTRY SELECT: Country name:', country.name);
 
     const countryData = {
-      id: country.iso.id.toString(), // Use the ID from iso object
-      name: country.iso.name,
-      iso: country.iso.code,
-      flag_url: country.iso.image_url
+      id: country.id.toString(),
+      name: country.name,
+      iso: country.iso,
+      flag_url: country.flag_url
     };
 
     console.log('🎯 COUNTRY SELECT: Final country data:', countryData);
@@ -315,36 +236,11 @@ const MyESIMs = () => {
   };
   // --- End Modal Logic ---
 
-  // Combine stored eSIMs with API eSIMs (if any), prioritizing stored eSIMs
+  // Use only stored eSIMs from localStorage
   const displayEsims = useMemo(() => {
-    // Only use API eSIMs if there's no error, otherwise use empty array
-    const apiEsims = error ? [] : (esims || []);
-
-    // If we have stored eSIMs, combine them with API eSIMs
-    if (storedEsims.length > 0) {
-      // Create a map of API eSIMs by ID to avoid duplicates
-      const apiEsimMap = new Map();
-      apiEsims.forEach((esim: any) => {
-        apiEsimMap.set(esim.id, esim);
-      });
-
-      // Remove any API eSIMs that might conflict with stored ones
-      storedEsims.forEach(storedEsim => {
-        if (apiEsimMap.has(storedEsim.id)) {
-          apiEsimMap.delete(storedEsim.id);
-        }
-      });
-
-      // Combine stored eSIMs (first) with remaining API eSIMs
-      const combinedEsims = [...storedEsims, ...Array.from(apiEsimMap.values())];
-      console.log('📱 DISPLAY: Combined eSIMs - Stored:', storedEsims.length, 'API:', apiEsimMap.size, 'Total:', combinedEsims.length);
-      return combinedEsims;
-    }
-
-    // If no stored eSIMs, use API data (or empty array if error)
-    console.log('📱 DISPLAY: Using API eSIMs:', apiEsims.length);
-    return apiEsims;
-  }, [storedEsims, esims, error]);
+    console.log('📱 DISPLAY: Using stored eSIMs only:', storedEsims.length);
+    return storedEsims;
+  }, [storedEsims]);
 
   const filteredESIMs = (displayEsims).filter((esim: any) =>
     esim.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -658,14 +554,14 @@ const MyESIMs = () => {
                           className="w-full flex items-center gap-3 p-3 rounded-md hover:bg-muted/50 transition-colors text-left border border-transparent hover:border-primary/20"
                         >
                           <img
-                            src={country.iso.image_url}
-                            alt={`${country.iso.name} flag`}
+                            src={country.flag_url}
+                            alt={`${country.name} flag`}
                             className="w-6 h-4 object-cover rounded-sm"
                             onError={(e) => {
                               e.currentTarget.style.display = 'none';
                             }}
                           />
-                          <span className="text-sm font-medium">{country.iso.name}</span>
+                          <span className="text-sm font-medium">{country.name}</span>
                         </button>
                       ))}
                     </div>

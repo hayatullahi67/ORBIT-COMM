@@ -1,19 +1,10 @@
-// GET /api/esim-package-details?packageId=XX
-// Proxies to https://esimcard.com/api/developer/reseller/package/detail/:id
-
-const { makeAuthenticatedRequest } = require('./esim-auth.js');
-
-const ESIM_API_BASE = 'https://esimcard.com/api/developer/reseller';
+const { getAccessToken } = require('./esim-auth.js');
 
 module.exports = async function handler(req, res) {
-  // Enable CORS
-  res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
-  );
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept, Authorization');
+  res.setHeader('Content-Type', 'application/json');
 
   if (req.method === 'OPTIONS') {
     res.status(200).end();
@@ -26,36 +17,53 @@ module.exports = async function handler(req, res) {
 
   const { packageId } = req.query;
 
-  console.log('📋 PACKAGE DETAILS API: Received packageId:', packageId);
-
   if (!packageId) {
-    return res.status(400).json({ error: 'packageId parameter is required' });
+    return res.status(400).json({ error: 'packageId is required' });
   }
 
   try {
-    const fullUrl = `${ESIM_API_BASE}/package/detail/${packageId}`;
-    console.log('📋 PACKAGE DETAILS API: Making request to:', fullUrl);
+    console.log('🔐 Getting access token for package details...');
+    const accessToken = await getAccessToken();
+    console.log('✅ Access token obtained for package details');
+
+    const url = `https://esimcard.com/api/developer/reseller/package/detail/${packageId}`;
+    console.log('📡 Making request to:', url);
     
-    const response = await makeAuthenticatedRequest(fullUrl);
-    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    });
+
+    console.log('📥 Package details response status:', response.status);
+
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('eSIM package details API error:', response.status, errorText);
-      return res.status(response.status).json({ 
-        error: 'Failed to fetch package details',
-        details: errorText 
+      console.error('❌ Package details API error:', response.status, errorText);
+      throw new Error(`API responded with ${response.status}: ${errorText}`);
+    }
+
+    const rawText = await response.text();
+    console.log('📄 Raw package details response (first 200 chars):', rawText.substring(0, 200));
+
+    let data;
+    try {
+      data = JSON.parse(rawText);
+    } catch (parseError) {
+      console.error('❌ JSON parse error:', parseError);
+      return res.status(500).json({ 
+        error: 'Invalid JSON response from eSIM API',
+        rawResponse: rawText.substring(0, 500)
       });
     }
 
-    const data = await response.json();
-    console.log('📋 PACKAGE DETAILS API: Response data:', data);
-    
+    console.log('📊 Parsed package details data:', JSON.stringify(data, null, 2));
     res.status(200).json(data);
   } catch (error) {
-    console.error('Package details endpoint error:', error);
-    res.status(500).json({ 
-      error: 'Internal server error',
-      details: error.message 
-    });
+    console.error('❌ Package details API error:', error);
+    res.status(500).json({ error: 'Failed to fetch package details', details: error.message });
   }
-}
+};
