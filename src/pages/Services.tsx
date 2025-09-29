@@ -4,13 +4,14 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Navbar from "@/components/layout/Navbar"
 import Footer from "@/components/layout/Footer"
 import { useTigerSmsPrices } from "@/hooks/useTigerSmsPrices"
-import { 
-  Search, 
-  Smartphone, 
-  MessageSquare, 
+import {
+  Search,
+  Smartphone,
+  MessageSquare,
   Star,
   Filter,
   ChevronDown,
@@ -23,17 +24,27 @@ import {
   Shield,
   Send,
   Phone,
-  Linkedin
+  Linkedin,
+  Wifi,
+  Calendar,
+  CreditCard,
+  MapPin,
+  Signal,
+  Download,
+  Repeat
 } from "lucide-react"
 import { FaWhatsapp, FaTelegramPlane, FaTwitter, FaInstagram, FaFacebook, FaDiscord, FaGoogle, FaAmazon } from "react-icons/fa"
 
 const Services = () => {
   const navigate = useNavigate()
+  const [activeTab, setActiveTab] = useState("sms")
   const [selectedService, setSelectedService] = useState("")
   const [selectedCountry, setSelectedCountry] = useState("")
   const [searchQuery, setSearchQuery] = useState("")
   const [hoveredService, setHoveredService] = useState("")
   const [hoveredCountry, setHoveredCountry] = useState("")
+  const [selectedRentalPlan, setSelectedRentalPlan] = useState("")
+  const [selectedEsimPlan, setSelectedEsimPlan] = useState("")
 
   // Fetch live pricing data
   const { prices, loading: pricesLoading, error: pricesError } = useTigerSmsPrices();
@@ -59,6 +70,126 @@ const Services = () => {
     li: { name: 'LinkedIn', icon: <Linkedin className="text-blue-800 m-[auto]" />, popular: false },
   };
 
+  // Hardcoded rental plans data
+  const rentalPlans = [
+    {
+      id: 'basic-7',
+      name: '7 Days Basic',
+      duration: '7 days',
+      price: '15.99',
+      features: ['Unlimited SMS', 'Voice calls', 'Basic support'],
+      popular: false,
+      countries: ['US', 'UK', 'CA', 'AU'],
+      icon: <Calendar className="text-blue-500 m-[auto]" />
+    },
+    {
+      id: 'premium-30',
+      name: '30 Days Premium',
+      duration: '30 days',
+      price: '49.99',
+      features: ['Unlimited SMS', 'Voice calls', 'Priority support', 'Multiple numbers'],
+      popular: true,
+      countries: ['US', 'UK', 'CA', 'AU', 'DE', 'FR'],
+      icon: <Star className="text-yellow-500 m-[auto]" />
+    },
+    {
+      id: 'business-90',
+      name: '90 Days Business',
+      duration: '90 days',
+      price: '129.99',
+      features: ['Unlimited SMS', 'Voice calls', '24/7 support', 'API access', 'Bulk operations'],
+      popular: false,
+      countries: ['US', 'UK', 'CA', 'AU', 'DE', 'FR', 'JP', 'SG'],
+      icon: <Shield className="text-green-500 m-[auto]" />
+    },
+    {
+      id: 'enterprise-365',
+      name: '1 Year Enterprise',
+      duration: '365 days',
+      price: '399.99',
+      features: ['Everything included', 'Dedicated support', 'Custom integrations', 'White-label'],
+      popular: false,
+      countries: ['Global coverage'],
+      icon: <Globe className="text-purple-500 m-[auto]" />
+    }
+  ];
+
+  // Hardcoded eSIM plans data
+  const esimPlans = [
+    {
+      id: 'travel-1gb',
+      name: 'Travel Starter',
+      data: '1GB',
+      duration: '7 days',
+      price: '9.99',
+      countries: ['US', 'UK', 'EU'],
+      features: ['High-speed data', 'Instant activation', 'No roaming fees'],
+      popular: false,
+      icon: <Wifi className="text-blue-500 m-[auto]" />
+    },
+    {
+      id: 'global-5gb',
+      name: 'Global Explorer',
+      data: '5GB',
+      duration: '30 days',
+      price: '29.99',
+      countries: ['100+ countries'],
+      features: ['5G speed', 'Hotspot sharing', 'Multi-country', 'eSIM profile'],
+      popular: true,
+      icon: <Globe className="text-green-500 m-[auto]" />
+    },
+    {
+      id: 'business-10gb',
+      name: 'Business Pro',
+      data: '10GB',
+      duration: '30 days',
+      price: '49.99',
+      countries: ['Global coverage'],
+      features: ['Priority network', 'Business support', 'Expense reporting', 'Team management'],
+      popular: false,
+      icon: <CreditCard className="text-purple-500 m-[auto]" />
+    },
+    {
+      id: 'unlimited-monthly',
+      name: 'Unlimited Monthly',
+      data: 'Unlimited',
+      duration: '30 days',
+      price: '79.99',
+      countries: ['US', 'CA', 'EU', 'UK'],
+      features: ['Truly unlimited', 'No throttling', 'Premium support', '5G access'],
+      popular: false,
+      icon: <Zap className="text-yellow-500 m-[auto]" />
+    }
+  ];
+
+  // Hardcoded countries for rentals
+  const rentalCountries = [
+    { id: 'US', name: 'United States', flag: '🇺🇸', price: '15.99', popular: true },
+    { id: 'UK', name: 'United Kingdom', flag: '🇬🇧', price: '12.99', popular: true },
+    { id: 'CA', name: 'Canada', flag: '🇨🇦', price: '14.99', popular: false },
+    { id: 'AU', name: 'Australia', flag: '🇦🇺', price: '16.99', popular: false },
+    { id: 'DE', name: 'Germany', flag: '🇩🇪', price: '11.99', popular: true },
+    { id: 'FR', name: 'France', flag: '🇫🇷', price: '11.99', popular: false },
+    { id: 'JP', name: 'Japan', flag: '🇯🇵', price: '18.99', popular: false },
+    { id: 'SG', name: 'Singapore', flag: '🇸🇬', price: '13.99', popular: false },
+    { id: 'NL', name: 'Netherlands', flag: '🇳🇱', price: '10.99', popular: false },
+    { id: 'SE', name: 'Sweden', flag: '🇸🇪', price: '12.99', popular: false }
+  ];
+
+  // Hardcoded countries for eSIMs
+  const esimCountries = [
+    { id: 'US', name: 'United States', flag: '🇺🇸', price: '9.99', popular: true },
+    { id: 'UK', name: 'United Kingdom', flag: '🇬🇧', price: '8.99', popular: true },
+    { id: 'EU', name: 'European Union', flag: '🇪🇺', price: '12.99', popular: true },
+    { id: 'CA', name: 'Canada', flag: '🇨🇦', price: '11.99', popular: false },
+    { id: 'AU', name: 'Australia', flag: '🇦🇺', price: '13.99', popular: false },
+    { id: 'JP', name: 'Japan', flag: '🇯🇵', price: '15.99', popular: false },
+    { id: 'KR', name: 'South Korea', flag: '🇰🇷', price: '14.99', popular: false },
+    { id: 'SG', name: 'Singapore', flag: '🇸🇬', price: '10.99', popular: false },
+    { id: 'TH', name: 'Thailand', flag: '🇹🇭', price: '7.99', popular: false },
+    { id: 'IN', name: 'India', flag: '🇮🇳', price: '6.99', popular: true }
+  ];
+
   const getFlagEmoji = (countryCode: string) => {
     return String.fromCodePoint(...[...countryCode.toUpperCase()].map(char => 0x1F1A5 + char.charCodeAt(0)));
   }
@@ -72,7 +203,7 @@ const Services = () => {
         const totalNumbers = Object.values(countryServices).reduce((sum: number, service: any) => sum + service.count, 0);
         const minPrice = Math.min(...Object.values(countryServices).map((service: any) => service.cost));
         const isPopular = totalNumbers > 50 || ['1', '16', '187', '22'].includes(code); // Ukraine, UK, US, India
-        
+
         return {
           id: code,
           name: countryNames[code] || `Unknown Country (${code})`,
@@ -130,14 +261,14 @@ const Services = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       {/* Animated Background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/5 rounded-full blur-3xl animate-pulse" />
         <div className="absolute top-1/2 -left-40 w-80 h-80 bg-secondary/5 rounded-full blur-3xl animate-pulse delay-1000" />
         <div className="absolute bottom-0 right-1/4 w-60 h-60 bg-primary/3 rounded-full blur-3xl animate-pulse delay-2000" />
       </div>
-      
+
       <div className="pt-20 px-4 sm:px-6 lg:px-8 relative">
         <div className="max-w-7xl mx-auto">
           {/* Enhanced Header */}
@@ -154,10 +285,10 @@ const Services = () => {
               <span className="text-foreground/90">for SMS Verification</span>
             </h1>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-8">
-              Get instant virtual numbers from 190+ countries for any service verification. 
+              Get instant virtual numbers from 190+ countries for any service verification.
               Fast, secure, and reliable SMS delivery with real-time dashboard viewing.
             </p>
-            
+
             {/* Live Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
               {[
@@ -188,7 +319,9 @@ const Services = () => {
                     <div className="p-2 bg-primary/10 rounded-lg">
                       <Filter className="h-5 w-5 text-primary" />
                     </div>
-                    SMS Deliveries
+                    {activeTab === 'sms' && 'SMS Deliveries'}
+                    {activeTab === 'rentals' && 'Number Rentals'}
+                    {activeTab === 'esims' && 'eSIM Plans'}
                   </CardTitle>
                   <div className="flex gap-2">
                     <Button variant="outline" size="sm" className="text-xs hover:bg-primary/10 hover:border-primary/30">
@@ -200,102 +333,247 @@ const Services = () => {
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-6 relative">
-                  {/* Service Selection */}
-                  <div>
-                    <div className="flex items-center gap-2 mb-4">
-                      <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-bold">1</div>
-                      <span className="text-sm font-semibold">Select service</span>
-                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0 ml-auto hover:bg-primary/10">
-                        🔄
-                      </Button>
-                    </div>
-                    
-                    {selectedService && (
-                      <div className="flex items-center gap-3 mb-4 p-3 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-xl border border-primary/20 animate-slide-up">
-                        <span className="text-2xl">{services.find(s => s.id === selectedService)?.icon}</span>
-                        <div className="flex-1">
-                          <span className="text-sm font-semibold block">{services.find(s => s.id === selectedService)?.name}</span>
-                          <span className="text-xs text-muted-foreground">Selected Service</span>
+                  {/* SMS Tab Content */}
+                  {activeTab === 'sms' && (
+                    <>
+                      {/* Service Selection */}
+                      <div>
+                        <div className="flex items-center gap-2 mb-4">
+                          <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-bold">1</div>
+                          <span className="text-sm font-semibold">Select service</span>
+                          <Button variant="ghost" size="sm" className="h-6 w-6 p-0 ml-auto hover:bg-primary/10">
+                            🔄
+                          </Button>
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive"
-                          onClick={() => setSelectedService("")}
-                        >
-                          ❌
-                        </Button>
+
+                        {selectedService && (
+                          <div className="flex items-center gap-3 mb-4 p-3 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-xl border border-primary/20 animate-slide-up">
+                            <span className="text-2xl">{services.find(s => s.id === selectedService)?.icon}</span>
+                            <div className="flex-1">
+                              <span className="text-sm font-semibold block">{services.find(s => s.id === selectedService)?.name}</span>
+                              <span className="text-xs text-muted-foreground">Selected Service</span>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive"
+                              onClick={() => setSelectedService("")}
+                            >
+                              ❌
+                            </Button>
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
+                    </>
+                  )}
 
-                  {/* Country Selection */}
-                  <div>
-                    <div className="flex items-center gap-2 mb-4">
-                      <div className="w-6 h-6 bg-secondary text-secondary-foreground rounded-full flex items-center justify-center text-xs font-bold">2</div>
-                      <span className="text-sm font-semibold">Select country</span>
-                    </div>
-                    
-                    <div className="relative mb-4">
-                      <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground z-10" />
-                      <Input
-                        placeholder="Find country..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-10 bg-background/50 backdrop-blur-sm border-border/50 focus:border-primary/50 focus:bg-background transition-all"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-secondary/5 rounded-lg -z-10" />
-                    </div>
+                  {/* Rentals Tab Content */}
+                  {activeTab === 'rentals' && (
+                    <>
+                      <div>
+                        <div className="flex items-center gap-2 mb-4">
+                          <div className="w-6 h-6 bg-secondary text-secondary-foreground rounded-full flex items-center justify-center text-xs font-bold">1</div>
+                          <span className="text-sm font-semibold">Select rental plan</span>
+                        </div>
 
-                    <div className="flex items-center gap-2 mb-4 p-2 bg-muted/30 rounded-lg">
-                      <Filter className="h-4 w-4 text-primary" />
-                      <span className="text-sm text-muted-foreground">by popularity</span>
-                      <ChevronDown className="h-4 w-4 ml-auto" />
-                      <Badge variant="outline" className="text-xs">Sort</Badge>
-                    </div>
+                        {selectedRentalPlan && (
+                          <div className="flex items-center gap-3 mb-4 p-3 bg-gradient-to-r from-secondary/10 to-primary/10 rounded-xl border border-secondary/20 animate-slide-up">
+                            <span className="text-2xl">{rentalPlans.find(p => p.id === selectedRentalPlan)?.icon}</span>
+                            <div className="flex-1">
+                              <span className="text-sm font-semibold block">{rentalPlans.find(p => p.id === selectedRentalPlan)?.name}</span>
+                              <span className="text-xs text-muted-foreground">Selected Plan</span>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive"
+                              onClick={() => setSelectedRentalPlan("")}
+                            >
+                              ❌
+                            </Button>
+                          </div>
+                        )}
+                      </div>
 
-                    <div className="space-y-3 max-h-96 overflow-y-auto custom-scrollbar">
-                      {filteredCountries.map((country, index) => (
-                        <div
-                          key={country.id}
-                          className={`group relative overflow-hidden rounded-xl border transition-all duration-300 cursor-pointer transform hover:scale-[1.02] ${
-                            selectedCountry === country.id 
-                              ? 'border-primary bg-gradient-to-r from-primary/10 to-secondary/10 shadow-glow' 
-                              : 'border-border hover:border-primary/30 hover:bg-gradient-to-r hover:from-primary/5 hover:to-secondary/5'
-                          }`}
-                          onClick={() => setSelectedCountry(country.id)}
-                          onMouseEnter={() => setHoveredCountry(country.id)}
-                          onMouseLeave={() => setHoveredCountry("")}
-                          style={{ animationDelay: `${index * 0.05}s` }}
-                        >
-                          <div className="flex items-center justify-between p-4">
-                            <div className="flex items-center gap-3">
-                              {country.popular && (
-                                <div className="absolute top-2 right-2">
-                                  <Star className="h-3 w-3 text-yellow-500 fill-current animate-pulse" />
+                      <div>
+                        <div className="flex items-center gap-2 mb-4">
+                          <div className="w-6 h-6 bg-secondary text-secondary-foreground rounded-full flex items-center justify-center text-xs font-bold">2</div>
+                          <span className="text-sm font-semibold">Select country</span>
+                        </div>
+
+                        <div className="space-y-3 max-h-96 overflow-y-auto custom-scrollbar">
+                          {rentalCountries.map((country, index) => (
+                            <div
+                              key={country.id}
+                              className={`group relative overflow-hidden rounded-xl border transition-all duration-300 cursor-pointer transform hover:scale-[1.02] ${selectedCountry === country.id
+                                ? 'border-secondary bg-gradient-to-r from-secondary/10 to-primary/10 shadow-glow'
+                                : 'border-border hover:border-secondary/30 hover:bg-gradient-to-r hover:from-secondary/5 hover:to-primary/5'
+                                }`}
+                              onClick={() => setSelectedCountry(country.id)}
+                            >
+                              <div className="flex items-center justify-between p-4">
+                                <div className="flex items-center gap-3">
+                                  {country.popular && (
+                                    <div className="absolute top-2 right-2">
+                                      <Star className="h-3 w-3 text-yellow-500 fill-current animate-pulse" />
+                                    </div>
+                                  )}
+                                  <div className="text-xl group-hover:scale-110 transition-transform">{country.flag}</div>
+                                  <div>
+                                    <span className="text-sm font-semibold block">{country.name}</span>
+                                    <span className="text-xs text-success font-medium">Available</span>
+                                  </div>
                                 </div>
-                              )}
-                              <div className="text-xl group-hover:scale-110 transition-transform">{country.flag}</div>
-                              <div>
-                                <span className="text-sm font-semibold block">{country.name}</span>
-                                <span className="text-xs text-success font-medium">{country.numbers} numbers</span>
+                                <div className="text-right">
+                                  <div className="text-lg font-bold text-secondary">from ${country.price}</div>
+                                  <div className="text-xs text-muted-foreground">per month</div>
+                                </div>
                               </div>
                             </div>
-                            <div className="text-right">
-                              <div className="text-lg font-bold text-primary">from {country.price}</div>
-                              <div className="text-xs text-muted-foreground">per SMS</div>
-                            </div>
-                          </div>
-                          {hoveredCountry === country.id && (
-                            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-secondary/5 pointer-events-none" />
-                          )}
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                  </div>
+                      </div>
+                    </>
+                  )}
 
-                  {/* Enhanced Get Number Button */}
-                  {selectedService && selectedCountry && (
+                  {/* eSIMs Tab Content */}
+                  {activeTab === 'esims' && (
+                    <>
+                      <div>
+                        <div className="flex items-center gap-2 mb-4">
+                          <div className="w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-bold">1</div>
+                          <span className="text-sm font-semibold">Select eSIM plan</span>
+                        </div>
+
+                        {selectedEsimPlan && (
+                          <div className="flex items-center gap-3 mb-4 p-3 bg-gradient-to-r from-green-500/10 to-blue-500/10 rounded-xl border border-green-500/20 animate-slide-up">
+                            <span className="text-2xl">{esimPlans.find(p => p.id === selectedEsimPlan)?.icon}</span>
+                            <div className="flex-1">
+                              <span className="text-sm font-semibold block">{esimPlans.find(p => p.id === selectedEsimPlan)?.name}</span>
+                              <span className="text-xs text-muted-foreground">Selected eSIM</span>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive"
+                              onClick={() => setSelectedEsimPlan("")}
+                            >
+                              ❌
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+
+                      <div>
+                        <div className="flex items-center gap-2 mb-4">
+                          <div className="w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-bold">2</div>
+                          <span className="text-sm font-semibold">Select country</span>
+                        </div>
+
+                        <div className="space-y-3 max-h-96 overflow-y-auto custom-scrollbar">
+                          {esimCountries.map((country, index) => (
+                            <div
+                              key={country.id}
+                              className={`group relative overflow-hidden rounded-xl border transition-all duration-300 cursor-pointer transform hover:scale-[1.02] ${selectedCountry === country.id
+                                ? 'border-green-500 bg-gradient-to-r from-green-500/10 to-blue-500/10 shadow-glow'
+                                : 'border-border hover:border-green-500/30 hover:bg-gradient-to-r hover:from-green-500/5 hover:to-blue-500/5'
+                                }`}
+                              onClick={() => setSelectedCountry(country.id)}
+                            >
+                              <div className="flex items-center justify-between p-4">
+                                <div className="flex items-center gap-3">
+                                  {country.popular && (
+                                    <div className="absolute top-2 right-2">
+                                      <Star className="h-3 w-3 text-yellow-500 fill-current animate-pulse" />
+                                    </div>
+                                  )}
+                                  <div className="text-xl group-hover:scale-110 transition-transform">{country.flag}</div>
+                                  <div>
+                                    <span className="text-sm font-semibold block">{country.name}</span>
+                                    <span className="text-xs text-success font-medium">Available</span>
+                                  </div>
+                                </div>
+                                <div className="text-right">
+                                  <div className="text-lg font-bold text-green-600">from ${country.price}</div>
+                                  <div className="text-xs text-muted-foreground">per plan</div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Country Selection - Only for SMS tab */}
+                  {activeTab === 'sms' && (
+                    <div>
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="w-6 h-6 bg-secondary text-secondary-foreground rounded-full flex items-center justify-center text-xs font-bold">2</div>
+                        <span className="text-sm font-semibold">Select country</span>
+                      </div>
+
+                      <div className="relative mb-4">
+                        <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground z-10" />
+                        <Input
+                          placeholder="Find country..."
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="pl-10 bg-background/50 backdrop-blur-sm border-border/50 focus:border-primary/50 focus:bg-background transition-all"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-secondary/5 rounded-lg -z-10" />
+                      </div>
+
+                      <div className="flex items-center gap-2 mb-4 p-2 bg-muted/30 rounded-lg">
+                        <Filter className="h-4 w-4 text-primary" />
+                        <span className="text-sm text-muted-foreground">by popularity</span>
+                        <ChevronDown className="h-4 w-4 ml-auto" />
+                        <Badge variant="outline" className="text-xs">Sort</Badge>
+                      </div>
+
+                      <div className="space-y-3 max-h-96 overflow-y-auto custom-scrollbar">
+                        {filteredCountries.map((country, index) => (
+                          <div
+                            key={country.id}
+                            className={`group relative overflow-hidden rounded-xl border transition-all duration-300 cursor-pointer transform hover:scale-[1.02] ${selectedCountry === country.id
+                              ? 'border-primary bg-gradient-to-r from-primary/10 to-secondary/10 shadow-glow'
+                              : 'border-border hover:border-primary/30 hover:bg-gradient-to-r hover:from-primary/5 hover:to-secondary/5'
+                              }`}
+                            onClick={() => setSelectedCountry(country.id)}
+                            onMouseEnter={() => setHoveredCountry(country.id)}
+                            onMouseLeave={() => setHoveredCountry("")}
+                            style={{ animationDelay: `${index * 0.05}s` }}
+                          >
+                            <div className="flex items-center justify-between p-4">
+                              <div className="flex items-center gap-3">
+                                {country.popular && (
+                                  <div className="absolute top-2 right-2">
+                                    <Star className="h-3 w-3 text-yellow-500 fill-current animate-pulse" />
+                                  </div>
+                                )}
+                                <div className="text-xl group-hover:scale-110 transition-transform">{country.flag}</div>
+                                <div>
+                                  <span className="text-sm font-semibold block">{country.name}</span>
+                                  <span className="text-xs text-success font-medium">{country.numbers} numbers</span>
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <div className="text-lg font-bold text-primary">from {country.price}</div>
+                                <div className="text-xs text-muted-foreground">per SMS</div>
+                              </div>
+                            </div>
+                            {hoveredCountry === country.id && (
+                              <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-secondary/5 pointer-events-none" />
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Action Buttons */}
+                  {/* SMS Action Button */}
+                  {activeTab === 'sms' && selectedService && selectedCountry && (
                     <div className="space-y-3 animate-slide-up">
                       <div className="p-4 bg-gradient-to-r from-success/10 to-primary/10 rounded-xl border border-success/20">
                         <div className="flex items-center gap-2 mb-2">
@@ -306,14 +584,62 @@ const Services = () => {
                           {services.find(s => s.id === selectedService)?.name} • {countries.find(c => c.id === selectedCountry)?.name}
                         </div>
                       </div>
-                      <Button 
-                        className="w-full bg-gradient-primary hover:shadow-glow transition-all duration-300 group" 
+                      <Button
+                        className="w-full bg-gradient-primary hover:shadow-glow transition-all duration-300 group"
                         size="lg"
                         onClick={() => navigate('/auth/login')}
                       >
                         <MessageSquare className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
-                        Get Number - {countries.find(c => c.id === selectedCountry)?.price}
+                        Get Number - ${countries.find(c => c.id === selectedCountry)?.price}
                         <Zap className="h-4 w-4 ml-2 group-hover:animate-pulse" />
+                      </Button>
+                    </div>
+                  )}
+
+                  {/* Rentals Action Button */}
+                  {activeTab === 'rentals' && selectedRentalPlan && (
+                    <div className="space-y-3 animate-slide-up">
+                      <div className="p-4 bg-gradient-to-r from-secondary/10 to-primary/10 rounded-xl border border-secondary/20">
+                        <div className="flex items-center gap-2 mb-2">
+                          <CheckCircle className="h-4 w-4 text-success" />
+                          <span className="text-sm font-semibold">Ready to rent</span>
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {rentalPlans.find(p => p.id === selectedRentalPlan)?.name} • {rentalPlans.find(p => p.id === selectedRentalPlan)?.duration}
+                        </div>
+                      </div>
+                      <Button
+                        className="w-full bg-gradient-to-r from-secondary to-secondary/80 hover:shadow-glow transition-all duration-300 group"
+                        size="lg"
+                        onClick={() => navigate('/auth/login')}
+                      >
+                        <Repeat className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
+                        Rent Number - ${rentalPlans.find(p => p.id === selectedRentalPlan)?.price}
+                        <Calendar className="h-4 w-4 ml-2 group-hover:animate-pulse" />
+                      </Button>
+                    </div>
+                  )}
+
+                  {/* eSIMs Action Button */}
+                  {activeTab === 'esims' && selectedEsimPlan && (
+                    <div className="space-y-3 animate-slide-up">
+                      <div className="p-4 bg-gradient-to-r from-green-500/10 to-blue-500/10 rounded-xl border border-green-500/20">
+                        <div className="flex items-center gap-2 mb-2">
+                          <CheckCircle className="h-4 w-4 text-success" />
+                          <span className="text-sm font-semibold">Ready to activate</span>
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {esimPlans.find(p => p.id === selectedEsimPlan)?.name} • {esimPlans.find(p => p.id === selectedEsimPlan)?.data}
+                        </div>
+                      </div>
+                      <Button
+                        className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:shadow-glow transition-all duration-300 group"
+                        size="lg"
+                        onClick={() => navigate('/auth/login')}
+                      >
+                        <Download className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
+                        Get eSIM - ${esimPlans.find(p => p.id === selectedEsimPlan)?.price}
+                        <Wifi className="h-4 w-4 ml-2 group-hover:animate-pulse" />
                       </Button>
                     </div>
                   )}
@@ -321,170 +647,385 @@ const Services = () => {
               </Card>
             </div>
 
-            {/* Enhanced Main Content */}
+            {/* Enhanced Main Content with Tabs */}
             <div className="lg:col-span-8">
-              {!selectedService ? (
-                /* Enhanced Service Selection Grid */
-                <div>
-                  <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
-                    <div className="p-2 bg-gradient-primary text-primary-foreground rounded-lg">
-                      <Smartphone className="h-5 w-5" />
-                    </div>
-                    Choose Your Service
-                  </h2>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-                    {filteredServices.map((service, index) => (
-                      <Card
-                        key={service.id}
-                        className={`glass border-0 cursor-pointer transition-all duration-300 group hover:shadow-glow hover:-translate-y-1 animate-slide-up ${
-                          selectedService === service.id ? 'ring-2 ring-primary shadow-glow' : ''
-                        }`}
-                        onClick={() => handleServiceSelect(service.id)}
-                        onMouseEnter={() => setHoveredService(service.id)}
-                        onMouseLeave={() => setHoveredService("")}
-                        style={{ animationDelay: `${index * 0.1}s` }}
-                      >
-                        <CardContent className="p-6 text-center relative overflow-hidden">
-                          <div className="text-4xl mb-3 group-hover:scale-110 transition-transform duration-300">{service.icon}</div>
-                          <h3 className="font-semibold text-base mb-2">{service.name}</h3>
-                          <p className="text-sm text-primary font-bold mb-3">from {service.price}</p>
-                          {service.popular && (
-                            <Badge variant="secondary" className="text-xs animate-pulse">
-                              🔥 Popular
-                            </Badge>
-                          )}
-                          {hoveredService === service.id && (
-                            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-secondary/10 pointer-events-none" />
-                          )}
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <TabsList className="grid w-full grid-cols-3 mb-8">
+                  <TabsTrigger value="sms" className="flex items-center gap-2">
+                    <MessageSquare className="h-4 w-4" />
+                    SMS
+                  </TabsTrigger>
+                  <TabsTrigger value="rentals" className="flex items-center gap-2">
+                    <Repeat className="h-4 w-4" />
+                    Rentals
+                  </TabsTrigger>
+                  <TabsTrigger value="esims" className="flex items-center gap-2">
+                    <Wifi className="h-4 w-4" />
+                    eSIMs
+                  </TabsTrigger>
+                </TabsList>
 
-                  {/* Info Cards */}
-                  <div className="grid md:grid-cols-2 gap-6 mt-8">
-                    <Card className="glass border-0">
-                      <CardHeader>
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 bg-primary/10 rounded-lg">
-                            <Globe className="h-6 w-6 text-primary" />
-                          </div>
-                          <div>
-                            <CardTitle className="text-lg">Over 500,000 Numbers</CardTitle>
-                            <CardDescription>Originating from Around 180 Countries Online</CardDescription>
-                          </div>
+                <TabsContent value="sms">
+                  {!selectedService ? (
+                    /* Enhanced Service Selection Grid */
+                    <div>
+                      <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
+                        <div className="p-2 bg-gradient-primary text-primary-foreground rounded-lg">
+                          <Smartphone className="h-5 w-5" />
                         </div>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-sm text-muted-foreground">
-                          Here you can find virtual numbers from more than 180 countries. 
-                          You can find phone numbers originating from pretty much anywhere, 
-                          including the UK, Sweden, Germany, France, India, Indonesia, Malaysia, 
-                          Cambodia, Mongolia, Canada, Thailand, Netherlands, Spain, etc.
-                        </p>
-                      </CardContent>
-                    </Card>
+                        Choose Your Service
+                      </h2>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+                        {filteredServices.map((service, index) => (
+                          <Card
+                            key={service.id}
+                            className={`glass border-0 cursor-pointer transition-all duration-300 group hover:shadow-glow hover:-translate-y-1 animate-slide-up ${selectedService === service.id ? 'ring-2 ring-primary shadow-glow' : ''
+                              }`}
+                            onClick={() => handleServiceSelect(service.id)}
+                            onMouseEnter={() => setHoveredService(service.id)}
+                            onMouseLeave={() => setHoveredService("")}
+                            style={{ animationDelay: `${index * 0.1}s` }}
+                          >
+                            <CardContent className="p-6 text-center relative overflow-hidden">
+                              <div className="text-4xl mb-3 group-hover:scale-110 transition-transform duration-300">{service.icon}</div>
+                              <h3 className="font-semibold text-base mb-2">{service.name}</h3>
+                              <p className="text-sm text-primary font-bold mb-3">from {service.price}</p>
+                              {service.popular && (
+                                <Badge variant="secondary" className="text-xs animate-pulse">
+                                  🔥 Popular
+                                </Badge>
+                              )}
+                              {hoveredService === service.id && (
+                                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-secondary/10 pointer-events-none" />
+                              )}
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
 
-                    <Card className="glass border-0">
-                      <CardHeader>
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 bg-secondary/10 rounded-lg">
-                            <Clock className="h-6 w-6 text-secondary" />
-                          </div>
-                          <div>
-                            <CardTitle className="text-lg">New Virtual Numbers Added Daily</CardTitle>
-                            <CardDescription>Fresh inventory every day</CardDescription>
-                          </div>
-                        </div>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-sm text-muted-foreground">
-                          Here, the pricing starts at one coin for a single number, 
-                          and you will not have to pay for monthly SIM plans too. 
-                          Get instant access to verification codes from any service.
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </div>
-              ) : (
-                /* Service Details */
-                <div>
-                  <div className="flex items-center gap-3 mb-6">
-                    <Button
-                      variant="outline"
-                      onClick={() => setSelectedService("")}
-                    >
-                      ← Back
-                    </Button>
-                    <div className="flex items-center gap-2">
-                      <span className="text-2xl">{services.find(s => s.id === selectedService)?.icon}</span>
-                      <h2 className="text-2xl font-bold">{services.find(s => s.id === selectedService)?.name} Verification</h2>
-                    </div>
-                  </div>
-
-                  <div className="grid gap-6">
-                    <Card className="glass border-0">
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                          <CheckCircle className="h-5 w-5 text-success" />
-                          How it works
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-3">
-                          <div className="flex gap-3">
-                            <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-bold">1</div>
-                            <p className="text-sm">Select {services.find(s => s.id === selectedService)?.name} and your preferred country</p>
-                          </div>
-                          <div className="flex gap-3">
-                            <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-bold">2</div>
-                            <p className="text-sm">Receive your virtual number instantly</p>
-                          </div>
-                          <div className="flex gap-3">
-                            <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-bold">3</div>
-                            <p className="text-sm">Use the number for {services.find(s => s.id === selectedService)?.name} verification</p>
-                          </div>
-                          <div className="flex gap-3">
-                            <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-bold">4</div>
-                            <p className="text-sm">View SMS codes in your dashboard in real-time</p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    <Card className="glass border-0">
-                      <CardHeader>
-                        <CardTitle>Available Countries for {services.find(s => s.id === selectedService)?.name}</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          {countries.map((country) => (
-                            <div
-                              key={country.id}
-                              className="flex items-center justify-between p-3 rounded-lg border border-border hover:border-primary/50 transition-colors"
-                            >
-                              <div className="flex items-center gap-3">
-                                <span className="text-lg">{country.flag}</span>
-                                <span className="text-sm font-medium">{country.name}</span>
+                      {/* Info Cards */}
+                      <div className="grid md:grid-cols-2 gap-6 mt-8">
+                        <Card className="glass border-0">
+                          <CardHeader>
+                            <div className="flex items-center gap-3">
+                              <div className="p-2 bg-primary/10 rounded-lg">
+                                <Globe className="h-6 w-6 text-primary" />
                               </div>
-                              <div className="text-right">
-                                <div className="text-sm font-bold text-primary">{country.price}</div>
-                                <div className="text-xs text-muted-foreground">{country.numbers} available</div>
+                              <div>
+                                <CardTitle className="text-lg">Over 500,000 Numbers</CardTitle>
+                                <CardDescription>Originating from Around 180 Countries Online</CardDescription>
                               </div>
                             </div>
-                          ))}
+                          </CardHeader>
+                          <CardContent>
+                            <p className="text-sm text-muted-foreground">
+                              Here you can find virtual numbers from more than 180 countries.
+                              You can find phone numbers originating from pretty much anywhere,
+                              including the UK, Sweden, Germany, France, India, Indonesia, Malaysia,
+                              Cambodia, Mongolia, Canada, Thailand, Netherlands, Spain, etc.
+                            </p>
+                          </CardContent>
+                        </Card>
+
+                        <Card className="glass border-0">
+                          <CardHeader>
+                            <div className="flex items-center gap-3">
+                              <div className="p-2 bg-secondary/10 rounded-lg">
+                                <Clock className="h-6 w-6 text-secondary" />
+                              </div>
+                              <div>
+                                <CardTitle className="text-lg">New Virtual Numbers Added Daily</CardTitle>
+                                <CardDescription>Fresh inventory every day</CardDescription>
+                              </div>
+                            </div>
+                          </CardHeader>
+                          <CardContent>
+                            <p className="text-sm text-muted-foreground">
+                              Here, the pricing starts at one coin for a single number,
+                              and you will not have to pay for monthly SIM plans too.
+                              Get instant access to verification codes from any service.
+                            </p>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    </div>
+                  ) : (
+                    /* Service Details */
+                    <div>
+                      <div className="flex items-center gap-3 mb-6">
+                        <Button
+                          variant="outline"
+                          onClick={() => setSelectedService("")}
+                        >
+                          ← Back
+                        </Button>
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl">{services.find(s => s.id === selectedService)?.icon}</span>
+                          <h2 className="text-2xl font-bold">{services.find(s => s.id === selectedService)?.name} Verification</h2>
                         </div>
-                      </CardContent>
-                    </Card>
+                      </div>
+
+                      <div className="grid gap-6">
+                        <Card className="glass border-0">
+                          <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                              <CheckCircle className="h-5 w-5 text-success" />
+                              How it works
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="space-y-3">
+                              <div className="flex gap-3">
+                                <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-bold">1</div>
+                                <p className="text-sm">Select {services.find(s => s.id === selectedService)?.name} and your preferred country</p>
+                              </div>
+                              <div className="flex gap-3">
+                                <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-bold">2</div>
+                                <p className="text-sm">Receive your virtual number instantly</p>
+                              </div>
+                              <div className="flex gap-3">
+                                <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-bold">3</div>
+                                <p className="text-sm">Use the number for {services.find(s => s.id === selectedService)?.name} verification</p>
+                              </div>
+                              <div className="flex gap-3">
+                                <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-bold">4</div>
+                                <p className="text-sm">View SMS codes in your dashboard in real-time</p>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+
+                        <Card className="glass border-0">
+                          <CardHeader>
+                            <CardTitle>Available Countries for {services.find(s => s.id === selectedService)?.name}</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                              {countries.map((country) => (
+                                <div
+                                  key={country.id}
+                                  className="flex items-center justify-between p-3 rounded-lg border border-border hover:border-primary/50 transition-colors"
+                                >
+                                  <div className="flex items-center gap-3">
+                                    <span className="text-lg">{country.flag}</span>
+                                    <span className="text-sm font-medium">{country.name}</span>
+                                  </div>
+                                  <div className="text-right">
+                                    <div className="text-sm font-bold text-primary">{country.price}</div>
+                                    <div className="text-xs text-muted-foreground">{country.numbers} available</div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    </div>
+                  )}
+                </TabsContent>
+
+                <TabsContent value="rentals">
+                  <div>
+                    <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
+                      <div className="p-2 bg-gradient-to-r from-secondary to-secondary/80 text-secondary-foreground rounded-lg">
+                        <Repeat className="h-5 w-5" />
+                      </div>
+                      Number Rental Plans
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {rentalPlans.map((plan, index) => (
+                        <Card
+                          key={plan.id}
+                          className={`glass border-0 cursor-pointer transition-all duration-300 group hover:shadow-glow hover:-translate-y-1 animate-slide-up ${selectedRentalPlan === plan.id ? 'ring-2 ring-secondary shadow-glow' : ''
+                            }`}
+                          onClick={() => setSelectedRentalPlan(plan.id)}
+                          style={{ animationDelay: `${index * 0.1}s` }}
+                        >
+                          <CardContent className="p-6 relative overflow-hidden">
+                            <div className="flex items-start justify-between mb-4">
+                              <div className="text-3xl group-hover:scale-110 transition-transform duration-300">{plan.icon}</div>
+                              {plan.popular && (
+                                <Badge variant="secondary" className="animate-pulse">
+                                  🔥 Popular
+                                </Badge>
+                              )}
+                            </div>
+                            <h3 className="font-bold text-lg mb-2">{plan.name}</h3>
+                            <p className="text-2xl font-bold text-secondary mb-2">${plan.price}</p>
+                            <p className="text-sm text-muted-foreground mb-4">{plan.duration}</p>
+                            <div className="space-y-2 mb-4">
+                              {plan.features.map((feature, idx) => (
+                                <div key={idx} className="flex items-center gap-2 text-sm">
+                                  <CheckCircle className="h-3 w-3 text-success" />
+                                  {feature}
+                                </div>
+                              ))}
+                            </div>
+                            <div className="flex flex-wrap gap-1">
+                              {plan.countries.map((country, idx) => (
+                                <Badge key={idx} variant="outline" className="text-xs">
+                                  {country}
+                                </Badge>
+                              ))}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+
+                    {/* Rental Info Cards */}
+                    <div className="grid md:grid-cols-2 gap-6 mt-8">
+                      <Card className="glass border-0">
+                        <CardHeader>
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 bg-secondary/10 rounded-lg">
+                              <Calendar className="h-6 w-6 text-secondary" />
+                            </div>
+                            <div>
+                              <CardTitle className="text-lg">Flexible Rental Periods</CardTitle>
+                              <CardDescription>From 7 days to 1 year plans</CardDescription>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-sm text-muted-foreground">
+                            Choose from flexible rental periods that suit your needs.
+                            All plans include unlimited SMS, voice calls, and dedicated support.
+                          </p>
+                        </CardContent>
+                      </Card>
+
+                      <Card className="glass border-0">
+                        <CardHeader>
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 bg-primary/10 rounded-lg">
+                              <Shield className="h-6 w-6 text-primary" />
+                            </div>
+                            <div>
+                              <CardTitle className="text-lg">Enterprise Features</CardTitle>
+                              <CardDescription>API access and bulk operations</CardDescription>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-sm text-muted-foreground">
+                            Business and Enterprise plans include API access,
+                            bulk operations, and dedicated account management.
+                          </p>
+                        </CardContent>
+                      </Card>
+                    </div>
                   </div>
-                </div>
-              )}
+                </TabsContent>
+
+                <TabsContent value="esims">
+                  <div>
+                    <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
+                      <div className="p-2 bg-gradient-to-r from-green-600 to-blue-600 text-white rounded-lg">
+                        <Wifi className="h-5 w-5" />
+                      </div>
+                      eSIM Data Plans
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {esimPlans.map((plan, index) => (
+                        <Card
+                          key={plan.id}
+                          className={`glass border-0 cursor-pointer transition-all duration-300 group hover:shadow-glow hover:-translate-y-1 animate-slide-up ${selectedEsimPlan === plan.id ? 'ring-2 ring-green-500 shadow-glow' : ''
+                            }`}
+                          onClick={() => setSelectedEsimPlan(plan.id)}
+                          style={{ animationDelay: `${index * 0.1}s` }}
+                        >
+                          <CardContent className="p-6 relative overflow-hidden">
+                            <div className="flex items-start justify-between mb-4">
+                              <div className="text-3xl group-hover:scale-110 transition-transform duration-300">{plan.icon}</div>
+                              {plan.popular && (
+                                <Badge className="bg-green-500 hover:bg-green-600 animate-pulse">
+                                  🔥 Popular
+                                </Badge>
+                              )}
+                            </div>
+                            <h3 className="font-bold text-lg mb-2">{plan.name}</h3>
+                            <p className="text-2xl font-bold text-green-600 mb-2">${plan.price}</p>
+                            <div className="flex items-center gap-4 mb-4">
+                              <div className="flex items-center gap-1">
+                                <Signal className="h-4 w-4 text-green-500" />
+                                <span className="text-sm font-medium">{plan.data}</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Clock className="h-4 w-4 text-blue-500" />
+                                <span className="text-sm text-muted-foreground">{plan.duration}</span>
+                              </div>
+                            </div>
+                            <div className="space-y-2 mb-4">
+                              {plan.features.map((feature, idx) => (
+                                <div key={idx} className="flex items-center gap-2 text-sm">
+                                  <CheckCircle className="h-3 w-3 text-success" />
+                                  {feature}
+                                </div>
+                              ))}
+                            </div>
+                            <div className="flex flex-wrap gap-1">
+                              {plan.countries.map((country, idx) => (
+                                <Badge key={idx} variant="outline" className="text-xs">
+                                  {country}
+                                </Badge>
+                              ))}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+
+                    {/* eSIM Info Cards */}
+                    <div className="grid md:grid-cols-2 gap-6 mt-8">
+                      <Card className="glass border-0">
+                        <CardHeader>
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 bg-green-500/10 rounded-lg">
+                              <Download className="h-6 w-6 text-green-500" />
+                            </div>
+                            <div>
+                              <CardTitle className="text-lg">Instant Activation</CardTitle>
+                              <CardDescription>Download and activate in seconds</CardDescription>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-sm text-muted-foreground">
+                            Get your eSIM instantly via QR code or direct download.
+                            No physical SIM card needed - activate within seconds.
+                          </p>
+                        </CardContent>
+                      </Card>
+
+                      <Card className="glass border-0">
+                        <CardHeader>
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 bg-blue-500/10 rounded-lg">
+                              <Globe className="h-6 w-6 text-blue-500" />
+                            </div>
+                            <div>
+                              <CardTitle className="text-lg">Global Coverage</CardTitle>
+                              <CardDescription>100+ countries supported</CardDescription>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-sm text-muted-foreground">
+                            Stay connected worldwide with our global eSIM plans.
+                            High-speed 5G data in over 100 countries.
+                          </p>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </div>
+                </TabsContent>
+              </Tabs>
             </div>
           </div>
         </div>
       </div>
-      
+
       <Footer />
     </div>
   )

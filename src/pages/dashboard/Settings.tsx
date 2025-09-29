@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import DashboardLayout from "@/components/layout/DashboardLayout"
+import { getCurrentUser, type User as AuthUser } from "@/lib/auth"
 import { 
   User, 
   Mail,
@@ -29,15 +30,20 @@ const Settings = () => {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false)
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [user, setUser] = useState<AuthUser | null>(null)
 
   const [profileData, setProfileData] = useState({
-    firstName: "John",
-    lastName: "Doe", 
-    email: "john.doe@example.com",
     phone: "+1 (555) 123-4567",
     company: "Tech Startup Inc.",
     timezone: "UTC-8 (PST)"
   })
+
+  // Load user data on component mount
+  useEffect(() => {
+    const currentUser = getCurrentUser()
+    console.log('⚙️ Settings - Current user:', currentUser)
+    setUser(currentUser)
+  }, [])
 
   const [securityData, setSecurityData] = useState({
     currentPassword: "",
@@ -104,7 +110,17 @@ const Settings = () => {
                 <div className="flex items-center gap-4">
                   <Avatar className="h-20 w-20">
                     <AvatarImage src="/placeholder-avatar.png" />
-                    <AvatarFallback className="text-lg">JD</AvatarFallback>
+                    <AvatarFallback className="text-lg">
+                      {user ? (
+                        user.firstName && user.lastName
+                          ? `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`
+                          : user.username 
+                            ? user.username.charAt(0).toUpperCase()
+                            : user.email
+                              ? user.email.charAt(0).toUpperCase()
+                              : 'U'
+                      ) : 'U'}
+                    </AvatarFallback>
                   </Avatar>
                   <div>
                     <Button variant="glass">Change Photo</Button>
@@ -121,19 +137,27 @@ const Settings = () => {
                     <Label htmlFor="firstName">First Name</Label>
                     <Input
                       id="firstName"
-                      value={profileData.firstName}
-                      onChange={(e) => setProfileData({...profileData, firstName: e.target.value})}
-                      className="glass"
+                      value={user?.firstName || 'Loading...'}
+                      readOnly
+                      disabled
+                      className="glass bg-muted/50 cursor-not-allowed"
                     />
+                    <p className="text-xs text-muted-foreground">
+                      Contact support to change your name
+                    </p>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="lastName">Last Name</Label>
                     <Input
                       id="lastName"
-                      value={profileData.lastName}
-                      onChange={(e) => setProfileData({...profileData, lastName: e.target.value})}
-                      className="glass"
+                      value={user?.lastName || 'Loading...'}
+                      readOnly
+                      disabled
+                      className="glass bg-muted/50 cursor-not-allowed"
                     />
+                    <p className="text-xs text-muted-foreground">
+                      Contact support to change your name
+                    </p>
                   </div>
                 </div>
 
@@ -142,14 +166,20 @@ const Settings = () => {
                   <Input
                     id="email"
                     type="email"
-                    value={profileData.email}
-                    onChange={(e) => setProfileData({...profileData, email: e.target.value})}
-                    className="glass"
+                    value={user?.email || 'Loading...'}
+                    readOnly
+                    disabled
+                    className="glass bg-muted/50 cursor-not-allowed"
                   />
-                  <Badge variant="secondary" className="text-xs">
-                    <Mail className="h-3 w-3 mr-1" />
-                    Verified
-                  </Badge>
+                  <div className="flex items-center justify-between">
+                    <Badge variant="secondary" className="text-xs">
+                      <Mail className="h-3 w-3 mr-1" />
+                      Verified
+                    </Badge>
+                    <p className="text-xs text-muted-foreground">
+                      Contact support to change your email
+                    </p>
+                  </div>
                 </div>
 
                 <div className="space-y-2">

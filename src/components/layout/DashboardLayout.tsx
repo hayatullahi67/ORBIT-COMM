@@ -28,16 +28,11 @@ import {
   Wallet
 } from "lucide-react"
 import { useTheme } from "next-themes"
+import { getCurrentUser, logoutUser, fetchCurrentUser, type User } from "@/lib/auth"
 
 
 interface DashboardLayoutProps {
   children: React.ReactNode
-}
-
-interface User {
-  firstName: string;
-  lastName: string;
-  email: string;
 }
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
@@ -47,35 +42,28 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchCurrentUser = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        navigate("/auth/login");
-        return;
-      }
-
+    const loadUser = async () => {
       try {
-        const response = await fetch("https://comiun.onrender.com/api/auth/current_user", {
-          headers: {
-            "Authorization": `Bearer ${token}`,
-          },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setUser(data);
-        } else {
-          console.error("Failed to fetch user data, logging out.");
-          // Token might be invalid or expired, clear it and redirect to login
-          localStorage.removeItem("token");
-          navigate("/auth/login");
+        // First try to get user from localStorage
+        let currentUser = getCurrentUser();
+        
+        console.log('🏠 DashboardLayout - User from localStorage:', currentUser);
+        
+        if (!currentUser) {
+          // If no user in localStorage, fetch from API
+          console.log('🔄 DashboardLayout - Fetching user from API...');
+          currentUser = await fetchCurrentUser();
         }
+        
+        console.log('👤 DashboardLayout - Final user data:', currentUser);
+        setUser(currentUser);
       } catch (error) {
-        console.error("Error fetching current user:", error);
+        console.error("❌ DashboardLayout - Error loading user:", error);
+        navigate("/auth/login");
       }
     };
 
-    fetchCurrentUser();
+    loadUser();
   }, [navigate]);
 
   const navigation = [
@@ -91,32 +79,13 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
   const handleLogout = async () => {
     setSidebarOpen(false);
-    const token = localStorage.getItem("token");
-
-    // If no token exists, just redirect to login
-    if (!token) {
-      navigate("/auth/login");
-      return;
-    }
-
+    
     try {
-      const response = await fetch("https://comiun.onrender.com/api/auth/logout", {
-        method: "POST", // Using POST is a common practice for logout
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        // Log an error if the server-side logout fails, but proceed with client-side logout
-        console.error("Server logout failed:", response.status);
-      }
+      await logoutUser();
+      navigate("/auth/login");
     } catch (error) {
-      console.error("Logout request failed:", error);
-    } finally {
-      // Always remove the token and redirect to login, regardless of server response
-      localStorage.removeItem("token");
+      console.error("Logout error:", error);
+      // Still navigate to login even if logout fails
       navigate("/auth/login");
     }
   };
@@ -191,16 +160,26 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                   <Avatar className="h-8 w-8 mr-3">
                     <AvatarImage src="/placeholder-avatar.png" alt={user ? `${user.firstName} ${user.lastName}` : 'User'} />
                     <AvatarFallback>
-                      {user && user.firstName && user.lastName
-                        ? `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`
-                        : 'U'}
+                      {user ? (
+                        user.firstName && user.lastName
+                          ? `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`
+                          : user.username 
+                            ? user.username.charAt(0).toUpperCase()
+                            : user.email
+                              ? user.email.charAt(0).toUpperCase()
+                              : 'U'
+                      ) : 'U'}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="flex-1 text-left">
-                    <p className="text-sm font-medium">
-                      {user ? `${user.firstName} ${user.lastName}` : "Loading..."}
+                  <div className="flex-1 text-left min-w-0">
+                    <p className="text-sm font-medium truncate">
+                      {user ? (
+                        user.firstName && user.lastName 
+                          ? `${user.firstName} ${user.lastName}`.trim()
+                          : user.username || user.email || "User"
+                      ) : "Loading..."}
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-muted-foreground truncate">
                       {user ? user.email : "..."}
                     </p>
                   </div>

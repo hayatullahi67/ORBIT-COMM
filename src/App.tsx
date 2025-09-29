@@ -5,6 +5,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 
+// Components
+import ProtectedRoute from "./components/ProtectedRoute";
+
 // Pages
 import Landing from "./pages/Landing";
 import Services from "./pages/Services";
@@ -40,14 +43,14 @@ const App = () => (
             <Route path="/auth/signup" element={<SignUp />} />
             <Route path="/auth/login" element={<Login />} />
 
-            {/* Dashboard Routes */}
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/dashboard/numbers" element={<MyNumbers />} />
-            <Route path="/dashboard/esims" element={<MyESIMs />} />
-            {/* <Route path="/dashboard/buy-esim" element={<BuyESIM />} /> */}
-            <Route path="/dashboard/transactions" element={<Transactions />} />
-            <Route path="/dashboard/api" element={<APIAccess />} />
-            <Route path="/dashboard/settings" element={<Settings />} />
+            {/* Protected Dashboard Routes */}
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/dashboard/numbers" element={<ProtectedRoute><MyNumbers /></ProtectedRoute>} />
+            <Route path="/dashboard/esims" element={<ProtectedRoute><MyESIMs /></ProtectedRoute>} />
+            {/* <Route path="/dashboard/buy-esim" element={<ProtectedRoute><BuyESIM /></ProtectedRoute>} /> */}
+            <Route path="/dashboard/transactions" element={<ProtectedRoute><Transactions /></ProtectedRoute>} />
+            <Route path="/dashboard/api" element={<ProtectedRoute><APIAccess /></ProtectedRoute>} />
+            <Route path="/dashboard/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
 
             {/* Static Pages */}
             <Route path="/about" element={<NotFound />} />

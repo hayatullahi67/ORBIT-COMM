@@ -7,12 +7,15 @@ import { Label } from "@/components/ui/label"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Smartphone, Eye, EyeOff, ArrowLeft, CheckCircle } from "lucide-react"
+import { registerUser } from "@/lib/auth"
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [formData, setFormData] = useState({
     username: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -33,26 +36,40 @@ const SignUp = () => {
     setLoading(true)
     setError(null)
     setSuccess(false)
+
+    // Validate passwords match
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match")
+      setLoading(false)
+      return
+    }
+
+    // Validate password strength
+    if (formData.password.length < 6) {
+      setError("Password must be at least 6 characters long")
+      setLoading(false)
+      return
+    }
+
+    // Validate required fields
+    if (!formData.username.trim() || !formData.firstName.trim() || !formData.lastName.trim()) {
+      setError("All fields are required")
+      setLoading(false)
+      return
+    }
+
     try {
-      // Replace with your actual API endpoint and payload
-      const response = await fetch("https://comiun.onrender.com/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: formData.username,
-          email: formData.email,
-          password: formData.password,
-          referralCode: formData.referralCode,
-        }),
+      await registerUser({
+        username: formData.username.trim(),
+        firstName: formData.firstName.trim(),
+        lastName: formData.lastName.trim(),
+        email: formData.email.trim(),
+        password: formData.password,
       })
-      if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.message || "Signup failed")
-      }
+      
       setSuccess(true)
-      // Optionally redirect or show a message
     } catch (err: any) {
-      setError(err.message)
+      setError(err.message || "Registration failed")
     } finally {
       setLoading(false)
     }
@@ -64,21 +81,21 @@ const SignUp = () => {
       <Dialog open={success} onOpenChange={(isOpen) => {
         if (!isOpen) {
           setSuccess(false);
-          navigate("/auth/login");
+          navigate("/dashboard");
         }
       }}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <CheckCircle className="h-6 w-6 text-green-500" />
-              Signup Successful!
+              Welcome to VirtualSIM!
             </DialogTitle>
             <DialogDescription className="pt-4 text-base">
-              Please check your email for a verification link. Also, check your spam folder. You need to verify your email before you can log in.
+              Your account has been created successfully and you're now logged in. Welcome to the platform!
             </DialogDescription>
           </DialogHeader>
-          <Button onClick={() => navigate("/auth/login")} className="mt-4 w-full">
-            Go to Login
+          <Button onClick={() => navigate("/dashboard")} className="mt-4 w-full">
+            Go to Dashboard
           </Button>
         </DialogContent>
       </Dialog>
@@ -113,18 +130,48 @@ const SignUp = () => {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-        <Label htmlFor="username">Username</Label>
-        <Input
-          id="username"
-          name="username"
-          type="text"
-          placeholder="Choose a username"
-          value={formData.username}
-          onChange={handleInputChange}
-          required
-          className="glass"
-        />
-      </div>
+                <Label htmlFor="username">Username</Label>
+                <Input
+                  id="username"
+                  name="username"
+                  type="text"
+                  placeholder="Choose a username"
+                  value={formData.username}
+                  onChange={handleInputChange}
+                  required
+                  className="glass"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="firstName">First Name</Label>
+                  <Input
+                    id="firstName"
+                    name="firstName"
+                    type="text"
+                    placeholder="John"
+                    value={formData.firstName}
+                    onChange={handleInputChange}
+                    required
+                    className="glass"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">Last Name</Label>
+                  <Input
+                    id="lastName"
+                    name="lastName"
+                    type="text"
+                    placeholder="Doe"
+                    value={formData.lastName}
+                    onChange={handleInputChange}
+                    required
+                    className="glass"
+                  />
+                </div>
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="email">Email Address</Label>
                 <Input

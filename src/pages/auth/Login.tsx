@@ -6,11 +6,12 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Smartphone, Eye, EyeOff, ArrowLeft } from "lucide-react"
+import { loginUser } from "@/lib/auth"
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({
-    username: "",
+    loginIdentifier: "",
     password: "",
     rememberMe: false
   })
@@ -27,27 +28,16 @@ const Login = () => {
     e.preventDefault()
     setLoading(true)
     setError(null)
+    
     try {
-      // 1. Login and get token
-      const response = await fetch("https://comiun.onrender.com/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: formData.username,
-          password: formData.password,
-        }),
+      await loginUser({
+        loginIdentifier: formData.loginIdentifier,
+        password: formData.password,
       })
-      const data = await response.json()
-      if (!response.ok) throw new Error(data.message || "Login failed")
-      const token = data.token
-
-      // 2. Store token (localStorage/sessionStorage)
-      localStorage.setItem("token", token)
-
-      // 3. Redirect to home/dashboard
+      
       navigate("/dashboard")
     } catch (err: any) {
-      setError(err.message)
+      setError(err.message || "Login failed")
     } finally {
       setLoading(false)
     }
@@ -87,13 +77,13 @@ const Login = () => {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="username">Username</Label>
+                <Label htmlFor="loginIdentifier">Username or Email</Label>
                 <Input
-                  id="username"
-                  name="username"
+                  id="loginIdentifier"
+                  name="loginIdentifier"
                   type="text"
-                  placeholder="Enter your username"
-                  value={formData.username}
+                  placeholder="Enter your username or email"
+                  value={formData.loginIdentifier}
                   onChange={handleInputChange}
                   required
                   className="glass"
