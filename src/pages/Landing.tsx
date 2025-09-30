@@ -5,22 +5,18 @@ import { Badge } from "@/components/ui/badge"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import Navbar from "@/components/layout/Navbar"
 import Footer from "@/components/layout/Footer"
-import HeroGlobe from "@/components/HeroGlobe"
-import CreativeFilter from "@/components/CreativeFilter"
+
 import CreativeHowItWorks from "@/components/CreativeHowItWorks"
+import ServiceSelector from "@/components/ServiceSelector"
 import {
   Smartphone,
   MessageSquare,
   Globe,
   Shield,
-  Zap,
-  CheckCircle,
   ArrowRight,
   Users,
   Clock,
   TrendingUp,
-  ChevronDown,
-  Sparkles,
   Rocket
 } from "lucide-react"
 
@@ -52,28 +48,7 @@ const Landing = () => {
     }
   ]
 
-  const howItWorks = [
-    {
-      step: "01",
-      title: "Choose Service",
-      description: "Select your desired service and country from our extensive global network."
-    },
-    {
-      step: "02",
-      title: "Get Number/eSIM",
-      description: "Receive your virtual number or eSIM activation instantly in your dashboard."
-    },
-    {
-      step: "03",
-      title: "Receive SMS",
-      description: "All messages appear in real-time in your secure, private dashboard."
-    },
-    {
-      step: "04",
-      title: "Verify & Connect",
-      description: "Use for verification or stay connected globally with our premium network."
-    }
-  ]
+
 
   const faqs = [
     {
@@ -195,6 +170,9 @@ const Landing = () => {
           </div>
         </div>
       </section>
+
+      {/* Interactive Service Selector */}
+      <ServiceSelector />
 
       {/* Service Preview */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/20">
