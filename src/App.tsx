@@ -17,6 +17,7 @@ import Login from "./pages/auth/Login";
 import Dashboard from "./pages/dashboard/Dashboard";
 import MyNumbers from "./pages/dashboard/MyNumbers";
 import MyESIMs from "./pages/dashboard/MyESIMs";
+import Rentals from "./pages/dashboard/Rentals";
 // import BuyESIM from "./pages/dashboard/BuyESIM";
 import Transactions from "./pages/dashboard/Transactions";
 import APIAccess from "./pages/dashboard/APIAccess";
@@ -47,6 +48,7 @@ const App = () => (
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/dashboard/numbers" element={<ProtectedRoute><MyNumbers /></ProtectedRoute>} />
             <Route path="/dashboard/esims" element={<ProtectedRoute><MyESIMs /></ProtectedRoute>} />
+            <Route path="/dashboard/rentals" element={<ProtectedRoute><Rentals /></ProtectedRoute>} />
             {/* <Route path="/dashboard/buy-esim" element={<ProtectedRoute><BuyESIM /></ProtectedRoute>} /> */}
             <Route path="/dashboard/transactions" element={<ProtectedRoute><Transactions /></ProtectedRoute>} />
             <Route path="/dashboard/api" element={<ProtectedRoute><APIAccess /></ProtectedRoute>} />

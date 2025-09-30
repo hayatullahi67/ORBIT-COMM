@@ -575,7 +575,8 @@ const MyNumbers = () => {
 
   return (
     <DashboardLayout>
-      <Dialog open={open} onOpenChange={handleModalClose}>
+      {/* OLD UI - COMMENTED OUT */}
+      {/* <Dialog open={open} onOpenChange={handleModalClose}>
         <DialogContent className="sm:max-w-md p-0">
           <DialogHeader className="p-6 pb-4">
             <DialogTitle>Get a New Number</DialogTitle>
@@ -650,8 +651,6 @@ const MyNumbers = () => {
               <Separator className="my-4" />
               <div className="flex justify-between items-center">
                 <Button variant="ghost" onClick={() => setStep(1)}>Back</Button>
-                {/* <Button variant="hero" disabled={selectedServices.length === 0}>
-                  Get Number */}
                 <Button variant="hero" onClick={handleGetNumber} disabled={selectedServices.length === 0 || isPurchasing}>
                   {isPurchasing ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -663,7 +662,7 @@ const MyNumbers = () => {
             </div>
           )}
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
 
       {/* Purchase Result Dialog */}
       <Dialog open={isResultModalOpen} onOpenChange={setIsResultModalOpen}>
@@ -737,174 +736,284 @@ const MyNumbers = () => {
         </DialogContent>
       </Dialog>
 
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-space font-bold">My Numbers</h1>
-            <p className="text-muted-foreground">Manage your virtual numbers and rental subscriptions</p>
-          </div>
-          {/* <Button variant="hero" onClick={() => setOpen(true)}> */}
-          <Button variant="hero" onClick={() => setOpen(true)} disabled={pricesLoading}>
-            <Plus className="h-4 w-4 mr-2" />
-            Get New Number
-          </Button>
-        </div>
-
-        {/* Search and Filters */}
-        <Card className="glass">
-          <CardContent className="p-6">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1">
-                <Label htmlFor="search">Search Numbers</Label>
-                <Input
-                  id="search"
-                  placeholder="Search by number or country..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="glass mt-2"
-                />
-              </div>
-              <div className="flex gap-2">
-                <Button variant="glass">All Types</Button>
-                <Button variant="glass">Active Only</Button>
+      {/* NEW UI - RESPONSIVE LAYOUT */}
+      <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 min-h-[calc(100vh-120px)]">
+        {/* Sidebar - SMS Purchase Flow */}
+        <div className="w-full lg:w-80 bg-card border rounded-lg p-4 lg:p-6 overflow-y-auto max-h-[50vh] lg:max-h-none">
+          <div className="space-y-6">
+            {/* Header */}
+            <div className="border-b pb-4">
+              <h2 className="text-xl font-semibold text-primary">SMS Deliveries</h2>
+              <div className="flex gap-4 mt-3">
+                <div className="flex items-center gap-2 text-sm text-primary">
+                  <div className="w-4 h-4 bg-primary rounded-sm flex items-center justify-center">
+                    <span className="text-xs text-white">$</span>
+                  </div>
+                  Prices
+                </div>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <div className="w-4 h-4 border rounded-sm"></div>
+                  Statistics
+                </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
 
-        {/* Numbers Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredNumbers.map((number) => (
-            <Card key={number.id} className="glass hover:shadow-glow transition-all duration-300">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                <div className="flex items-center gap-2">
-                  <Smartphone className="h-5 w-5 text-primary" />
-                  <Badge className={getTypeColor(number.type)}>
-                    {number.type}
-                  </Badge>
-                </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <MoreVertical className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem>
-                      <Copy className="h-4 w-4 mr-2" />
-                      Copy Number
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={async () => {
-                        if (number.activationId) {
-                          const result = await setTigerSmsStatus(number.activationId, "end");
-                          // Optionally update local state if successful
-                          if (result.startsWith("ACCESS_END")) {
-                            setNumbers(prev =>
-                              prev.map(n =>
-                                n.id === number.id ? { ...n, status: "Expired" } : n
-                              )
-                            );
-                          } else {
-                            alert(`Failed to end: ${result}`);
-                          }
-                        }
-                      }}
-                    >
-                      <RefreshCw className="h-4 w-4 mr-2" />
-                      Renew
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => handleViewMessages(number)}
-                    >
-                      <MessageSquare className="h-4 w-4 mr-2" />
-                      View Messages
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="text-destructive"
-                      onClick={async () => {
-                        if (number.activationId) {
-                          const result = await setTigerSmsStatus(number.activationId, "cancel");
-                          // Optionally update local state if successful
-                          if (result.startsWith("ACCESS_CANCEL")) {
-                            setNumbers(prev => prev.filter(n => n.id !== number.id));
-                          } else {
-                            alert(`Failed to cancel: ${result}`);
-                          }
-                        }
-                      }}
-                    >
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </CardHeader>
+            {/* Step 1: Select Service */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="font-medium">1. Select service</h3>
+                <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </div>
 
-              <CardContent className="space-y-4">
-                <div>
-                  <div className="text-lg font-mono font-bold">{number.number}</div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <MapPin className="h-3 w-3" />
-                    {number.country}
+              {selectedServices.length > 0 ? (
+                <div className="bg-muted/50 rounded-lg p-3 flex items-center gap-3">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 w-6 p-0"
+                    onClick={() => setSelectedServices([])}
+                  >
+                    ✕
+                  </Button>
+                  <div className="flex items-center gap-2">
+                    <Instagram className="h-5 w-5 text-pink-500" />
+                    <span className="text-sm">{serviceDetails[selectedServices[0]]?.name || selectedServices[0]}</span>
                   </div>
                 </div>
-
-                <div className="flex items-center justify-between">
-                  <Badge className={getStatusColor(number.status)}>
-                    {number.status}
-                  </Badge>
-                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                    <MessageSquare className="h-3 w-3" />
-                    {number.messagesCount} messages
-                  </div>
-                </div>
-
+              ) : (
                 <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Expires:</span>
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-3 w-3" />
-                      {new Date(number.expires).toLocaleDateString()}
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Last used:</span>
-                    <span>{number.lastUsed}</span>
-                  </div>
+                  {Object.entries(serviceDetails).slice(0, 3).map(([code, service]) => (
+                    <button
+                      key={code}
+                      onClick={() => setSelectedServices([code])}
+                      className="w-full bg-muted/30 rounded-lg p-3 flex items-center gap-3 hover:bg-muted/50 transition-colors"
+                    >
+                      <service.icon className="h-5 w-5 text-primary" />
+                      <span className="text-sm">{service.name}</span>
+                    </button>
+                  ))}
                 </div>
+              )}
+            </div>
 
-                <div>
-                  <div className="text-sm font-medium mb-2">Services Used:</div>
-                  <div className="flex flex-wrap gap-1">
-                    {number.services.map((service) => (
-                      <Badge key={service} variant="secondary" className="text-xs">
-                        {service}
-                      </Badge>
+            {/* Step 2: Select Country */}
+            <div className="space-y-3">
+              <h3 className="font-medium">2. Select country</h3>
+
+              {selectedCountry ? (
+                <div className="bg-muted/50 rounded-lg p-3 flex items-center gap-3">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 w-6 p-0"
+                    onClick={() => setSelectedCountry(null)}
+                  >
+                    ✕
+                  </Button>
+                  <span className="text-lg">{getFlagEmoji(countryCodeToIso[selectedCountry.code] || 'XX')}</span>
+                  <span className="text-sm">{selectedCountry.name}</span>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <Input
+                    placeholder="Search countries..."
+                    value={countrySearchTerm}
+                    onChange={(e) => setCountrySearchTerm(e.target.value)}
+                    className="text-sm"
+                  />
+                  <ScrollArea className="h-32">
+                    <div className="space-y-1">
+                      {filteredCountries.slice(0, 5).map((country) => (
+                        <button
+                          key={country.code}
+                          onClick={() => setSelectedCountry(country)}
+                          className="w-full bg-muted/30 rounded-lg p-2 flex items-center gap-3 hover:bg-muted/50 transition-colors text-left"
+                        >
+                          <span className="text-sm">{getFlagEmoji(countryCodeToIso[country.code] || 'XX')}</span>
+                          <span className="text-sm">{country.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                </div>
+              )}
+            </div>
+
+            {/* Step 3: Select Operator */}
+            {selectedCountry && selectedServices.length > 0 && (
+              <div className="space-y-3">
+                <h3 className="font-medium">3. Select operator</h3>
+
+                {servicesForSelectedCountry.length > 0 ? (
+                  <div className="space-y-2">
+                    {servicesForSelectedCountry.slice(0, 2).map((service, index) => (
+                      <div key={service.code} className="border rounded-lg p-3">
+                        {index === 0 && (
+                          <div className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded mb-2 inline-block">
+                            BEST OPERATOR
+                          </div>
+                        )}
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-medium">Virtual{index + 51}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg font-bold">{service.cost.toFixed(0)}</span>
+                            <span className="text-xs bg-muted rounded-full px-2 py-1">€</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-between text-sm text-muted-foreground mb-3">
+                          <div className="flex items-center gap-1">
+                            <span>📧 {(Math.random() * 20 + 70).toFixed(1)}%</span>
+                            <span>&gt;1 SMS</span>
+                          </div>
+                          <span className={service.count > 100 ? "text-green-600" : "text-red-600"}>
+                            {service.count > 100 ? `${Math.floor(service.count / 1000)}k` : service.count} numbers
+                          </span>
+                        </div>
+                        <Button
+                          className="w-full bg-blue-500 hover:bg-blue-600 text-white"
+                          onClick={handleGetNumber}
+                          disabled={isPurchasing}
+                        >
+                          {isPurchasing ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <div className="flex items-center gap-2">
+                              <span>🛒</span>
+                            </div>
+                          )}
+                        </Button>
+                      </div>
                     ))}
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                ) : (
+                  <div className="text-center text-muted-foreground text-sm py-4">
+                    No operators available for this service and country combination.
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
-        {filteredNumbers.length === 0 && (
-          <Card className="glass">
-            <CardContent className="text-center py-12">
-              <Smartphone className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No numbers found</h3>
-              <p className="text-muted-foreground mb-4">
-                {searchTerm ? "Try adjusting your search terms" : "Get your first virtual number to get started"}
-              </p>
-              <Button variant="hero" onClick={() => setOpen(true)} disabled={pricesLoading}>
-                <Plus className="h-4 w-4 mr-2" />
-                Get Your First Number
-              </Button>
-            </CardContent>
-          </Card>
-        )}
+        {/* Main Content - Numbers History */}
+        <div className="flex-1 space-y-4 lg:space-y-6">
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+            <div>
+              <h1 className="text-xl lg:text-2xl font-bold">My Numbers</h1>
+              <p className="text-sm lg:text-base text-muted-foreground">Your purchased virtual numbers history</p>
+            </div>
+          </div>
+
+          {/* Search */}
+          <div className="flex gap-4">
+            <Input
+              placeholder="Search by number or country..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full sm:max-w-sm"
+            />
+          </div>
+
+          {/* Numbers Grid */}
+          {filteredNumbers.length === 0 ? (
+            <Card className="glass">
+              <CardContent className="p-12 text-center">
+                <Smartphone className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-medium mb-2">No Numbers Yet</h3>
+                <p className="text-muted-foreground mb-4">
+                  Get your first virtual number using the sidebar on the left.
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid gap-4">
+              {filteredNumbers.map((number) => (
+                <Card key={number.id} className="glass">
+                  <CardContent className="p-4 lg:p-6">
+                    <div className="flex flex-col sm:flex-row items-start justify-between gap-3">
+                      <div className="flex items-start gap-3 flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <span className="text-lg">{getFlagEmoji(number.countryCode)}</span>
+                          <div className="min-w-0">
+                            <p className="font-mono text-sm sm:text-lg font-medium truncate">{number.number}</p>
+                            <p className="text-xs sm:text-sm text-muted-foreground truncate">{number.country}</p>
+                          </div>
+                        </div>
+                        <div className="flex flex-wrap gap-1 sm:gap-2">
+                          <Badge className={`${getStatusColor(number.status)} text-xs`}>
+                            {number.status}
+                          </Badge>
+                          <Badge className={`${getTypeColor(number.type)} text-xs`}>
+                            {number.type}
+                          </Badge>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto">
+                        <div className="text-right flex-1 sm:flex-none">
+                          <p className="text-xs text-muted-foreground">Messages</p>
+                          <p className="text-sm font-medium">{number.messagesCount}</p>
+                        </div>
+                        <div className="text-right flex-1 sm:flex-none">
+                          <p className="text-xs text-muted-foreground">Expires</p>
+                          <p className="text-xs sm:text-sm font-medium">
+                            {new Date(number.expires).toLocaleDateString()}
+                          </p>
+                        </div>
+
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="sm" className="flex-shrink-0">
+                              <MoreVertical className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => handleViewMessages(number)}>
+                              <MessageSquare className="h-4 w-4 mr-2" />
+                              View Messages
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(number.number)}>
+                              <Copy className="h-4 w-4 mr-2" />
+                              Copy Number
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              className="text-destructive"
+                              onClick={async () => {
+                                if (number.activationId) {
+                                  await setTigerSmsStatus(number.activationId, "cancel");
+                                  setNumbers(prev => prev.filter(n => n.id !== number.id));
+                                }
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Cancel Number
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </div>
+
+                    {number.services.length > 0 && (
+                      <div className="mt-3 pt-3 border-t">
+                        <p className="text-xs sm:text-sm text-muted-foreground mb-2">Services:</p>
+                        <div className="flex flex-wrap gap-1">
+                          {number.services.map((service, idx) => (
+                            <Badge key={idx} variant="outline" className="text-xs">
+                              {service}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </DashboardLayout>
   )

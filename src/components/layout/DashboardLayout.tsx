@@ -70,7 +70,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     { name: "Dashboard", href: "/dashboard", icon: Home },
     { name: "My Numbers", href: "/dashboard/numbers", icon: Smartphone },
     { name: "My eSIMs", href: "/dashboard/esims", icon: Globe },
-    { name: "Transactions", href: "/dashboard/transactions", icon: CreditCard },
+    { name: "Rentals", href: "/dashboard/rentals", icon: CreditCard },
+    { name: "Transactions", href: "/dashboard/transactions", icon: Wallet },
     { name: "API Access", href: "/dashboard/api", icon: Code },
     { name: "Settings", href: "/dashboard/settings", icon: Settings },
   ]
